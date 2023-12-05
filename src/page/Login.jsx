@@ -1,10 +1,39 @@
 import React, { useState } from "react"
-import TextField from "@mui/material/TextField"
-import Button from "@mui/material/Button"
-import { Container, Typography, Box } from "@mui/material"
-import LoginForm from "../component/LoginForm.jsx"
+import {
+   TextField,
+   Button,
+   Grid,
+   Paper,
+   Container,
+   Typography,
+   Box
+} from "@mui/material"
+import authService from "../services/authService.jsx"
+import { useNavigate } from "react-router-dom"
 
 const Login = () => {
+   const navigate = useNavigate()
+
+   const [username, setUsername] = useState("")
+   const [password, setPassword] = useState("")
+   const [error, setError] = useState("")
+
+   const [isLoggedIn, setIsLoggedIn] = useState(false)
+   const [userInfo, setUserInfo] = useState(null)
+
+   //Submit Form
+   const handleSubmit = async event => {
+      event.preventDefault()
+      try {
+         const userData = await authService.login(username, password)
+         setUserInfo(userData) //storing user data
+         setIsLoggedIn(true) //Updating login state
+         navigate("/dashboard")
+      } catch (err) {
+         console.error("login error:", err)
+         setError("Invalid credentials")
+      }
+   }
    return (
       <Container maxWidth="sm">
          <Box
@@ -20,7 +49,49 @@ const Login = () => {
             >
                Task Management System
             </Typography>
-            <LoginForm />
+            {/* LoginForm component */}
+            <Paper style={{ padding: 20 }}>
+               <Typography variant="h6" textAlign="centre ">
+                  Login
+               </Typography>
+               <form onSubmit={handleSubmit}>
+                  <Grid container direction="column" spacing={2}>
+                     <Grid item>
+                        <TextField
+                           label="username"
+                           type="text"
+                           fullWidth
+                           value={username}
+                           onChange={e => setUsername(e.target.value)}
+                        />
+                     </Grid>
+                     <Grid item>
+                        <TextField
+                           label="Password"
+                           type="password"
+                           fullWidth
+                           value={password}
+                           onChange={e => setPassword(e.target.value)}
+                        />
+                     </Grid>
+                     {error && (
+                        <Grid item>
+                           <Typography color="error">{error}</Typography>
+                        </Grid>
+                     )}
+                     <Grid item>
+                        <Button
+                           type="submit"
+                           variant="contained"
+                           color="primary"
+                           fullWidth
+                        >
+                           Login
+                        </Button>
+                     </Grid>
+                  </Grid>
+               </form>
+            </Paper>
          </Box>
       </Container>
    )

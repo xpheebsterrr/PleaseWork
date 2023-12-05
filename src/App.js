@@ -1,7 +1,13 @@
 import React from "react"
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom"
+import {
+   BrowserRouter as Router,
+   Route,
+   Routes,
+   BrowserRouter
+} from "react-router-dom"
 import { createTheme, ThemeProvider } from "@mui/material"
 import Login from "./page/Login.jsx"
+import Dashboard from "./page/Dashboard.jsx"
 
 const theme = createTheme({
    palette: {
@@ -28,13 +34,13 @@ const theme = createTheme({
 function App() {
    return (
       <ThemeProvider theme={theme}>
-         <Router>
+         <BrowserRouter>
             <Routes>
                <Route path="/" element={<Login />} />
+               <Route path="/dashboard" element={<Dashboard />} />
                {/* <Route path="/admin" component={AdminPage} /> */}
-               {/* You can add more routes here */}
             </Routes>
-         </Router>
+         </BrowserRouter>
       </ThemeProvider>
    )
 }
