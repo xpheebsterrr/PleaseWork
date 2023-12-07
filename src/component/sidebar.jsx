@@ -1,35 +1,59 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Sidebar, Menu, MenuItem } from "react-pro-sidebar"
 import { Box, IconButton, Typography } from "@mui/material"
-import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined"
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined"
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined"
+import Cookies from "js-cookie"
+import userServices from "../services/userServices.jsx"
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
-   // Define some basic colors
+   const navigate = useNavigate()
    const primaryColor = "#556cd6" // Example primary color
    const greyColor = "#999" // Example grey color
 
+   const handleNavigation = () => {
+      setSelected(title)
+      navigate(to)
+   }
+
    return (
-      <Link to={to} style={{ textDecoration: "none" }}>
-         <MenuItem
-            active={selected === title}
-            style={{
-               color: greyColor
-            }}
-            onClick={() => setSelected(title)}
-            icon={icon}
-         >
-            <Typography>{title}</Typography>
-         </MenuItem>
-      </Link>
+      <MenuItem active={selected === title} style={{ color: greyColor }} onClick={handleNavigation} icon={icon}>
+         <Typography>{title}</Typography>
+      </MenuItem>
    )
 }
 
 const Sidebarr = () => {
    const [isCollapsed, setIsCollapsed] = useState(false)
    const [selected, setSelected] = useState("Dashboard")
+   const [isAdmin, setIsAdmin] = useState(false)
+   const token = Cookies.get("token")
+
+   useEffect(() => {
+      async function checkAdmin() {
+         try {
+            await userServices.checkGroup("admin").then(function (result) {
+               if (result.response && result.response.status == 401) {
+                  Cookies.remove("token")
+                  Navigate("/")
+               }
+               if (result.result === true) {
+                  setIsAdmin(true)
+               }
+            })
+         } catch (e) {
+            setIsAdmin(false)
+         }
+      }
+      checkAdmin()
+   }, [token])
+
+   //check state
+   //  useEffect(() => {
+   //     console.log("hi", isAdmin)
+   //  }, [isAdmin])
 
    return (
       <Box
@@ -44,29 +68,17 @@ const Sidebarr = () => {
          <Sidebar collapsed={isCollapsed}>
             <Menu iconShape="square">
                {/* LOGO AND MENU ICON */}
-               <MenuItem
-                  onClick={() => setIsCollapsed(!isCollapsed)}
-                  icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
-               >
+               <MenuItem onClick={() => setIsCollapsed(!isCollapsed)} icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}>
                   {!isCollapsed && (
-                     <Box
-                        display="flex"
-                        justifyContent="space-between"
-                        alignItems="center"
-                     >
+                     <Box display="flex" justifyContent="space-between" alignItems="center">
                         <Typography variant="h3">TMS</Typography>
-                        <IconButton
-                           onClick={() => setIsCollapsed(!isCollapsed)}
-                        >
+                        <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
                            <MenuOutlinedIcon />
                         </IconButton>
                      </Box>
                   )}
                </MenuItem>
-               <Box
-                  paddingLeft={isCollapsed ? undefined : "10%"}
-                  sx={{ marginTop: "35px" }}
-               >
+               <Box paddingLeft={isCollapsed ? undefined : "10%"} sx={{ marginTop: "35px" }}>
                   <Item
                      title="Dashboard"
                      to="/dashboard"
@@ -74,17 +86,20 @@ const Sidebarr = () => {
                      selected={selected}
                      setSelected={setSelected}
                   />
-
-                  <Typography variant="h6" sx={{ m: "15px 0 5px 20px" }}>
-                     Admin Functions
-                  </Typography>
-                  <Item
-                     title="Admin"
-                     to="/admin"
-                     icon={<ContactsOutlinedIcon />}
-                     selected={selected}
-                     setSelected={setSelected}
-                  />
+                  {isAdmin ? (
+                     <Typography variant="h6" sx={{ m: "15px 0 5px 20px" }}>
+                        Admin Functions
+                     </Typography>
+                  ) : null}
+                  {isAdmin ? (
+                     <Item
+                        title="Admin"
+                        to="/admin"
+                        icon={<ContactsOutlinedIcon />}
+                        selected={selected}
+                        setSelected={setSelected}
+                     />
+                  ) : null}
                </Box>
             </Menu>
          </Sidebar>
@@ -93,39 +108,3 @@ const Sidebarr = () => {
 }
 
 export default Sidebarr
-
-// const Item = ({ title, to, icon, selected, setSelected }) => {
-//   // Define some basic colors
-//   const primaryColor = "#556cd6"; // Example primary color
-//   const greyColor = "#999"; // Example grey color
-
-//   return (
-//     <Link to={to} style={{ textDecoration: 'none' }}>
-//       <MenuItem
-//         active={selected === title}
-//         style={{
-//           color: greyColor
-//         }}
-//         onClick={() => setSelected(title)}
-//         icon={icon}
-//       >
-//         <Typography>{title}</Typography>
-//       </MenuItem>
-//     </Link>
-//   );
-// };
-
-{
-   /* <MenuItem
-  // ...other props...
-  onClick={() => setSelected(title)}
-  icon={icon}
->
-  <Link to={to}>
-    <Typography>{title}</Typography>
-  </Link>
-</MenuItem>
-
-Link Usage Inside MenuItem:
-The usage of the Link component from react-router-dom might not be correct. Typically, the Link component is used to wrap around the content that should act as a link. In your Item component, the Link component is placed without wrapping any visible content. You should wrap the Typography component with the Link: */
-}

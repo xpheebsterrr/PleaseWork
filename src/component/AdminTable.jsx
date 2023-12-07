@@ -13,6 +13,7 @@ import {
    InputLabel,
    FormControl
 } from "@mui/material"
+import CreateUserForm from "./CreateUserForm.jsx"
 import userServices from "../services/userServices.jsx"
 
 function AdminTable() {
@@ -65,43 +66,39 @@ function AdminTable() {
       }
       return (
          <TableRow>
+            <TableCell>{isEditing ? <input defaultValue={currentUserEdits.username} /> : user.username}</TableCell>
+            <TableCell>{isEditing ? <input type="email" defaultValue={currentUserEdits.email} /> : user.email} </TableCell>
+            <TableCell>{isEditing ? <input type="password" defaultValue={"********"} /> : "********"} </TableCell>
             <TableCell>
                {isEditing ? (
-                  <input defaultValue={currentUserEdits.username} />
+                  <FormControl fullWidth>
+                     <InputLabel id="group-select-label-${user.username}">User Group</InputLabel>
+                     <Select
+                        labelId="group-select-label-"
+                        multiple
+                        value={currentUserEdits.groupnames}
+                        onChange={e => handleEditChange(user.username, "groupnames", e.target.value)}
+                        renderValue={selected => selected.join(", ")}
+                     >
+                        {/* Populate MenuItems with group names */}
+                     </Select>
+                  </FormControl>
                ) : (
-                  user.username
+                  user.groupnames
                )}
-            </TableCell>
-            <TableCell>
-               {isEditing ? (
-                  <input type="email" defaultValue={currentUserEdits.email} />
-               ) : (
-                  user.email
-               )}{" "}
-            </TableCell>
-            <TableCell>
-               {isEditing ? (
-                  <input type="password" defaultValue={"********"} />
-               ) : (
-                  "********"
-               )}{" "}
             </TableCell>
             <TableCell>
                {isEditing ? (
                   <>
                      <Button
-                        variant={
-                           currentUserEdits.isActive ? "contained" : "outlined"
-                        }
+                        variant={currentUserEdits.isActive ? "contained" : "outlined"}
                         color="primary"
                         onClick={() => handleIsActiveChange(true)}
                      >
                         Active
                      </Button>
                      <Button
-                        variant={
-                           !currentUserEdits.isActive ? "contained" : "outlined"
-                        }
+                        variant={!currentUserEdits.isActive ? "contained" : "outlined"}
                         color="secondary"
                         onClick={() => handleIsActiveChange(false)}
                      >
@@ -116,54 +113,16 @@ function AdminTable() {
             </TableCell>
             <TableCell>
                {isEditing ? (
-                  <FormControl fullWidth>
-                     <InputLabel id="group-select-label-${user.username}">
-                        User Group
-                     </InputLabel>
-                     <Select
-                        labelId="group-select-label-"
-                        multiple
-                        value={currentUserEdits.groupnames}
-                        onChange={e =>
-                           handleEditChange(
-                              user.username,
-                              "groupnames",
-                              e.target.value
-                           )
-                        }
-                        renderValue={selected => selected.join(", ")}
-                     >
-                        {/* Populate MenuItems with group names */}
-                     </Select>
-                  </FormControl>
-               ) : (
-                  user.groupnames
-               )}
-            </TableCell>
-            <TableCell>
-               {isEditing ? (
                   <>
-                     <Button
-                        onClick={() => saveChanges(user)}
-                        variant="contained"
-                        color="primary"
-                     >
+                     <Button onClick={() => saveChanges(user)} variant="contained" color="primary">
                         Save
                      </Button>
-                     <Button
-                        onClick={() => toggleEditMode(null)}
-                        variant="contained"
-                        color="secondary"
-                     >
+                     <Button onClick={() => toggleEditMode(null)} variant="contained" color="secondary">
                         Cancel
                      </Button>
                   </>
                ) : (
-                  <Button
-                     onClick={() => toggleEditMode(user.username)}
-                     variant="contained"
-                     color="primary"
-                  >
+                  <Button onClick={() => toggleEditMode(user.username)} variant="contained" color="primary">
                      Edit
                   </Button>
                )}
@@ -189,15 +148,13 @@ function AdminTable() {
                   <TableCell>Username</TableCell>
                   <TableCell>Email</TableCell>
                   <TableCell>Password</TableCell>
-                  <TableCell>IsActive</TableCell>
                   <TableCell>User Group</TableCell>
+                  <TableCell>IsActive</TableCell>
                </TableRow>
             </TableHead>
             <TableBody>
-               {Array.isArray(users) &&
-                  users.map(user => (
-                     <UserRow key={user.username} user={user} />
-                  ))}
+               <CreateUserForm />
+               {Array.isArray(users) && users.map(user => <UserRow key={user.username} user={user} />)}
             </TableBody>
          </Table>
       </Paper>

@@ -3,6 +3,7 @@ import Topbar from "../component/topbar.jsx"
 import Sidebarr from "../component/sidebar.jsx"
 import { Container, Box, Typography } from "@mui/material"
 import AdminTable from "../component/AdminTable.jsx"
+import CreateUserForm from "../component/CreateUserForm.jsx"
 
 const Admin = () => {
    return (
@@ -17,6 +18,7 @@ const Admin = () => {
                   <Typography variant="h4" style={{ margin: "20px 15px" }}>
                      Admin Management
                   </Typography>
+                  {/* <CreateUserForm /> */}
                   <AdminTable />
                </Typography>
             </Box>

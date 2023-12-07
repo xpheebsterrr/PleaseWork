@@ -14,7 +14,7 @@ const login = async (username, password) => {
          // localStorage.setItem("user", JSON.stringify(response.data))
          // Set token in cookie
          Cookies.set("token", response.data.token, {
-            expires: 1, //expire in 1 dayk
+            expires: 1, //expire in 1 day
             secure: true, //prevent js from accessing cookie
             sameSite: "Strict" //protect against CSRF attacks
          })
@@ -26,20 +26,11 @@ const login = async (username, password) => {
          // The request was made and the server responded with a status code
          // that falls out of the range of 2xx
          console.log("incorrect email or password")
-         console.error(
-            "Server responded with an error:",
-            error.response.status,
-            error.response.data
-         )
-         throw new Error(
-            error.response.data.message || "Error occurred during login"
-         )
+         console.error("Server responded with an error:", error.response.status, error.response.data)
+         throw new Error(error.response.data.message || "Error occurred during login")
       } else if (error.request) {
          // The request was made but no response was received
-         console.error(
-            "No response received for the login request:",
-            error.request
-         )
+         console.error("No response received for the login request:", error.request)
          throw new Error("No response from server")
       } else {
          // Something happened in setting up the request that triggered an Error
@@ -49,10 +40,25 @@ const login = async (username, password) => {
    }
 }
 
-const logout = () => {
-   localStorage.removeItem("user")
+const logout = async () => {
+   const userData = { access_token: Cookies.get("token") }
+   try {
+      const response = await axios.post(`${API_URL}/logoutUser`, userData)
+      // Assuming the token is removed on the server side as well
+      Cookies.remove("token")
+      navigate("/")
+      toast.success(response.data.message)
+   } catch (e) {
+      if (e.response && e.response.status === 401) {
+         // Specific handling for 401 errors
+         Cookies.remove("token")
+         navigate("/")
+      }
+      toast.error(e.response ? e.response.data.message : e.message, {
+         autoClose: false
+      })
+   }
 }
-
 // Add other authentication-related methods as needed
 
 export default {

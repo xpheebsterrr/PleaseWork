@@ -1,5 +1,5 @@
 // export default Topbar
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Box, IconButton, InputBase } from "@mui/material"
 import { useLocation } from "react-router-dom"
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined"
@@ -7,13 +7,30 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined"
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined"
 import SearchIcon from "@mui/icons-material/Search"
 import ExitToAppIcon from "@mui/icons-material/ExitToApp"
+import { useNavigate } from "react-router-dom"
 
 const Topbar = () => {
-   // Hide topbar from login page
-   const location = useLocation()
-   if (location.pathname === "/login") {
-      return null // Render nothing
-   }
+   const navigatae = useNavigate()
+   const [isAdmin, setIsAdmin] = useState(false)
+
+   // useEffect(() => {
+   //    async function checkAdmin() {
+   //       try {
+   //          await userServices.checkGroup("admin").then(function (result) {
+   //             if (result.response && result.response.status == 401) {
+   //                Cookies.remove("jwt-token")
+   //                Navigate("/")
+   //             }
+   //             if (result === true) {
+   //                setIsAdmin(true)
+   //             }
+   //          })
+   //       } catch (e) {
+   //          setIsAdmin(false)
+   //       }
+   //    }
+   //    checkAdmin()
+   // }, [token])
 
    return (
       <Box display="flex" justifyContent="space-between" p={2}>

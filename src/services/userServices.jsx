@@ -20,7 +20,7 @@ const getAllUsers = async () => {
 
 //create user
 const createUser = async (username, email, password, groupname, isActive) => {
-   const userData = { username, email, password, groupname, isActive }
+   const userData = { access_token: Cookies.get("token"), username, email, password, groupname, isActive }
    try {
       const response = await axios.post(`${API_URL}/createUser`, userData)
       return response.data
@@ -32,7 +32,7 @@ const createUser = async (username, email, password, groupname, isActive) => {
 
 //toggle isActive
 const toggleIsActive = async (username, isActive) => {
-   const userData = { isActive }
+   const userData = { access_token: Cookies.get("token"), isActive }
    try {
       const response = await axios.put(`${API_URL}/toggle-status`, userData)
       return response.data
@@ -44,7 +44,7 @@ const toggleIsActive = async (username, isActive) => {
 
 //update Users (unable to update username)
 const updateUser = async (email, password, groupname, isActive) => {
-   const userData = { email, password, groupname, isActive }
+   const userData = { access_token: Cookies.get("token"), email, password, groupname, isActive }
    try {
       const response = await axios.put(`${API_URL}/users/:username`, userData)
       return response.data
@@ -56,7 +56,7 @@ const updateUser = async (email, password, groupname, isActive) => {
 
 //createGroup
 const createGroup = async groupname => {
-   const groupData = { groupname }
+   const groupData = { access_token: Cookies.get("token"), groupname }
    try {
       const response = await axios.post(`${API_URL}/createGroup`, groupData)
       return response.data
@@ -66,10 +66,23 @@ const createGroup = async groupname => {
    }
 }
 
+//CheckGroup
+const checkGroup = async groupnames => {
+   const groupData = { access_token: Cookies.get("token"), groupnames }
+   try {
+      const response = await axios.post(`${API_URL}/checkGroup`, groupData)
+      return response.data
+   } catch (error) {
+      console.error("User not in specified group", error)
+      throw error
+   }
+}
+
 export default {
    getAllUsers,
    createUser,
    toggleIsActive,
    updateUser,
-   createGroup
+   createGroup,
+   checkGroup
 }
