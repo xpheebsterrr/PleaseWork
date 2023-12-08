@@ -2,13 +2,14 @@ import React, { useState } from "react"
 import { Button, TextField, FormControlLabel, Checkbox, TableCell, TableRow } from "@mui/material"
 import userServices from "../services/userServices.jsx" // Adjust the path as necessary
 import Cookies from "js-cookie"
+import { toast } from "react-toastify"
 
-function CreateUserForm({ onUserCreated }) {
+function CreateUserForm() {
    const [newUserData, setNewUserData] = useState({
       username: "",
       email: "",
       password: "",
-      groupname: "",
+      groupnames: "",
       isActive: true
    })
 
@@ -31,14 +32,11 @@ function CreateUserForm({ onUserCreated }) {
             newUserData.username,
             newUserData.email,
             newUserData.password,
-            newUserData.groupname,
-            newUserData.isActive,
+            newUserData.groupnames,
             accessToken //Passing the access token
          )
-         onUserCreated() // Callback to notify parent component the user created
       } catch (error) {
-         console.error("Error creating user:", error)
-         // Optionally handle error UI here
+         console.error("Unexpected error in handleSubmit:", error)
       }
    }
 
@@ -61,13 +59,18 @@ function CreateUserForm({ onUserCreated }) {
             />
          </TableCell>
          <TableCell>
-            <TextField fullWidth label="Group Name" name="groupname" value={newUserData.groupname} onChange={handleInputChange} />
+            <TextField
+               fullWidth
+               label="Group Name"
+               name="groupnames"
+               value={newUserData.groupnames}
+               onChange={handleInputChange}
+            />
          </TableCell>
          <TableCell>
-            <FormControlLabel
-               control={<Checkbox checked={newUserData.isActive} onChange={handleCheckboxChange} name="isActive" />}
-               label=""
-            />
+            <Button name="isActive" color="primary">
+               Active
+            </Button>
          </TableCell>
          <TableCell>
             <Button onClick={handleSubmit} variant="contained" color="primary">

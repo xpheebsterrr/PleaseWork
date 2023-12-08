@@ -2,6 +2,7 @@ import React from "react"
 import Topbar from "../component/topbar.jsx"
 import Sidebarr from "../component/sidebar.jsx"
 import { Container, Box, Typography } from "@mui/material"
+import EditUser from "../component/EditUser.jsx"
 
 const Dashboard = () => {
    return (
@@ -13,6 +14,7 @@ const Dashboard = () => {
             <Box flexGrow={1}>
                <Topbar />
                <Typography>The Task Management System goes here</Typography>
+               <EditUser />
             </Box>
          </Box>
       </Container>

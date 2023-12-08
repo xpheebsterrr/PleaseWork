@@ -1,5 +1,7 @@
 import axios from "axios"
 import Cookies from "js-cookie"
+import { toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css" // Import the CSS for toast styling
 
 const API_URL = "http://localhost:3000/api/v1" // Replace with your API URL
 
@@ -25,7 +27,7 @@ const login = async (username, password) => {
       if (error.response) {
          // The request was made and the server responded with a status code
          // that falls out of the range of 2xx
-         console.log("incorrect email or password")
+         toast.error("incorrect email or password")
          console.error("Server responded with an error:", error.response.status, error.response.data)
          throw new Error(error.response.data.message || "Error occurred during login")
       } else if (error.request) {

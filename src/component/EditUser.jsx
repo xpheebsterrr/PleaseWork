@@ -20,28 +20,24 @@ import { toast } from "react-toastify"
 import Cookies from "js-cookie"
 import { useNavigate } from "react-router-dom"
 
-const AdminTable = () => {
+const EditUser = () => {
    const navigate = useNavigate()
 
    const [users, setUsers] = useState([])
    const [editingUser, setEditingUser] = useState(null) //to track editing user
    const [userEdits, setUserEdits] = useState({}) //New state to track edits
 
-   // store all available group options and currently selected group options
-   const [groupOptions, setGroupOptions] = useState([])
-   const [selectedGroups, setSelectedGroups] = useState([])
-
    //fetch all users on table
    useEffect(() => {
-      const fetchUsers = async () => {
+      const fetchUser = async () => {
          try {
-            const data = await userServices.getAllUsers()
+            const data = await userServices.getUser()
             setUsers(data.data) //response is an array of users
          } catch (error) {
             console.error("Error fetching users:", error)
          }
       }
-      if (editingUser == null) fetchUsers()
+      if (editingUser == null) fetchUser()
    }, [editingUser])
 
    //Edit each UserRow
@@ -99,7 +95,7 @@ const AdminTable = () => {
          toast.error("Failed to update user. Please try again.")
          return
       }
-      // Set user that is currently being edited
+      // Update the local users state
       setUsers(
          users.map(user => {
             if (user.username === username) {
@@ -122,37 +118,11 @@ const AdminTable = () => {
    }
 
    const UserRow = ({ user }) => {
-      const [groupOptions, setGroupOptions] = useState([])
       const isEditing = editingUser === user.username
       const currentUserEdits = userEdits[user.username] || {
          ...user,
          groupnames: user.groupnames.split(",")
       }
-      console.log("userrow is rendered ", user.username)
-
-      useEffect(() => {
-         const getGroupOptions = async () => {
-            try {
-               const result = await userServices.getAllGroups(user.username).catch(e => {
-                  if (e.response.status === 401) {
-                     Cookies.remove("jwt-token")
-                     navigate("/")
-                  }
-                  let error = e.response.data
-                  if (error) {
-                     // Show error message
-                     toast.error(error.message, {
-                        autoClose: false
-                     })
-                  }
-               })
-               setGroupOptions(result.data.map(group => group.groupname))
-            } catch (e) {
-               console.error("TODO")
-            }
-         }
-         getGroupOptions()
-      }, [])
 
       return (
          <TableRow>
@@ -181,48 +151,7 @@ const AdminTable = () => {
                   "********"
                )}
             </TableCell>
-            <TableCell>
-               {isEditing ? (
-                  <FormControl fullWidth>
-                     <InputLabel id="group-select-label-${user.username}">User Group</InputLabel>
-                     <Select
-                        labelId="group-select-label-"
-                        multiple
-                        value={currentUserEdits.groupnames.split(",")}
-                        onChange={e => handleEditChange(user.username, "groupnames", e.target.value.join(","))}
-                        //renderValue={selected => selected.join(", ")}
-                     >
-                        {Array.isArray(groupOptions) && groupOptions.map(opt => <MenuItem value={opt}>{opt}</MenuItem>)}
-                     </Select>
-                  </FormControl>
-               ) : (
-                  user.groupnames
-               )}
-            </TableCell>
-            <TableCell>
-               {isEditing ? (
-                  <>
-                     <Button
-                        variant={currentUserEdits.isActive ? "contained" : "outlined"}
-                        color="primary"
-                        onClick={() => handleIsActiveChange(user.username, true)}
-                     >
-                        Active
-                     </Button>
-                     <Button
-                        variant={!currentUserEdits.isActive ? "contained" : "outlined"}
-                        color="secondary"
-                        onClick={() => handleIsActiveChange(user.username, false)}
-                     >
-                        Inactive
-                     </Button>
-                  </>
-               ) : user.isActive ? (
-                  "Active"
-               ) : (
-                  "Inactive"
-               )}
-            </TableCell>
+
             <TableCell>
                {isEditing ? (
                   <>
@@ -260,17 +189,12 @@ const AdminTable = () => {
                   <TableCell>Username</TableCell>
                   <TableCell>Email</TableCell>
                   <TableCell>Password</TableCell>
-                  <TableCell>User Group</TableCell>
-                  <TableCell>IsActive</TableCell>
                </TableRow>
             </TableHead>
-            <TableBody>
-               <CreateUserForm />
-               {Array.isArray(users) && users.map(user => <UserRow key={user.username} user={user} />)}
-            </TableBody>
+            <TableBody>{Array.isArray(users) && users.map(user => <UserRow key={user.username} user={user} />)}</TableBody>
          </Table>
       </Paper>
    )
 }
 
-export default AdminTable
+export default EditUser

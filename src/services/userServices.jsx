@@ -1,5 +1,6 @@
 import axios from "axios"
 import Cookies from "js-cookie"
+import { toast } from "react-toastify"
 
 const API_URL = "http://localhost:3000/api/v1" // Replace with your API URL
 
@@ -18,14 +19,35 @@ const getAllUsers = async () => {
    }
 }
 
-//create user
-const createUser = async (username, email, password, groupname, isActive) => {
-   const userData = { access_token: Cookies.get("token"), username, email, password, groupname, isActive }
+//get User from database
+const getUser = async () => {
    try {
+      const userData = {
+         access_token: Cookies.get("token")
+      }
+      const response = await axios.post(`${API_URL}/getUser`, userData)
+      return response.data
+   } catch (error) {
+      console.error("Error fetching user:", error)
+      throw error // Propagate error for handling in the calling component
+   }
+}
+
+//create user
+const createUser = async (username, email, password, groupnames) => {
+   const userData = { access_token: Cookies.get("token"), username, email, password, groupnames }
+   try {
+      console.log("asds", userData)
       const response = await axios.post(`${API_URL}/createUser`, userData)
+      const message = response.data.message
+      // Show a toast with the dynamic message
+      toast.success(`${message}`)
       return response.data
    } catch (error) {
       console.error("Error creating user:", error)
+      const errorMessage = error.response?.data?.message || "Failed to create user. Please try again."
+      // Show an error toast with the dynamic error message
+      toast.error(errorMessage)
       throw error
    }
 }
@@ -43,8 +65,8 @@ const toggleIsActive = async (username, isActive) => {
 }
 
 //update Users (unable to update username)
-const updateUser = async (email, password, groupname, isActive) => {
-   const userData = { access_token: Cookies.get("token"), email, password, groupname, isActive }
+const updateUser = async (username, email, password, groupnames, isActive) => {
+   const userData = { access_token: Cookies.get("token"), username, email, password, groupnames, isActive }
    try {
       const response = await axios.put(`${API_URL}/users/:username`, userData)
       return response.data
@@ -66,6 +88,21 @@ const createGroup = async groupname => {
    }
 }
 
+//get all Groups from database
+const getAllGroups = async username => {
+   try {
+      const userData = {
+         access_token: Cookies.get("token"),
+         username
+      }
+      const response = await axios.post(`${API_URL}/getGroup`, userData)
+      return response.data
+   } catch (error) {
+      console.error("Error fetching users:", error)
+      throw error // Propagate error for handling in the calling component
+   }
+}
+
 //CheckGroup
 const checkGroup = async groupnames => {
    const groupData = { access_token: Cookies.get("token"), groupnames }
@@ -84,5 +121,7 @@ export default {
    toggleIsActive,
    updateUser,
    createGroup,
-   checkGroup
+   checkGroup,
+   getAllGroups,
+   getUser
 }

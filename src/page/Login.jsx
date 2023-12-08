@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { TextField, Button, Grid, Paper, Container, Typography, Box } from "@mui/material"
 import authService from "../services/authService.jsx"
 import { useNavigate } from "react-router-dom"
+import { toast } from "react-toastify"
 
 const Login = () => {
    const navigate = useNavigate()
@@ -20,6 +21,7 @@ const Login = () => {
          const userData = await authService.login(username, password)
          setUserInfo(userData) //storing user data
          setIsLoggedIn(true) //Updating login state
+         toast.success("Logged in Successfully")
          navigate("/dashboard")
       } catch (err) {
          console.error("login error:", err)
@@ -40,10 +42,22 @@ const Login = () => {
                <form onSubmit={handleSubmit}>
                   <Grid container direction="column" spacing={2}>
                      <Grid item>
-                        <TextField label="username" type="text" fullWidth value={username} onChange={e => setUsername(e.target.value)} />
+                        <TextField
+                           label="username"
+                           type="text"
+                           fullWidth
+                           value={username}
+                           onChange={e => setUsername(e.target.value)}
+                        />
                      </Grid>
                      <Grid item>
-                        <TextField label="Password" type="password" fullWidth value={password} onChange={e => setPassword(e.target.value)} />
+                        <TextField
+                           label="Password"
+                           type="password"
+                           fullWidth
+                           value={password}
+                           onChange={e => setPassword(e.target.value)}
+                        />
                      </Grid>
                      {error && (
                         <Grid item>

@@ -1,14 +1,10 @@
 import React from "react"
-import {
-   BrowserRouter as Router,
-   Route,
-   Routes,
-   BrowserRouter
-} from "react-router-dom"
+import { BrowserRouter as Router, Route, Routes, BrowserRouter } from "react-router-dom"
 import { createTheme, ThemeProvider } from "@mui/material"
 import Login from "./page/Login.jsx"
 import Dashboard from "./page/Dashboard.jsx"
 import Admin from "./page/Admin.jsx"
+import { ToastContainer } from "react-toastify"
 
 const theme = createTheme({
    palette: {
@@ -42,6 +38,7 @@ function App() {
                <Route path="/admin" element={<Admin />} />
             </Routes>
          </BrowserRouter>
+         <ToastContainer closeOnClick theme="colored" autoClose={1000} />
       </ThemeProvider>
    )
 }
