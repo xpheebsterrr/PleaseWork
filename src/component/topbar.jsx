@@ -1,36 +1,25 @@
 // export default Topbar
 import React, { useEffect, useState } from "react"
 import { Box, IconButton, InputBase } from "@mui/material"
-import { useLocation } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined"
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined"
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined"
 import SearchIcon from "@mui/icons-material/Search"
 import ExitToAppIcon from "@mui/icons-material/ExitToApp"
-import { useNavigate } from "react-router-dom"
+import authService from "../services/authService.jsx"
+import { toast } from "react-toastify"
 
 const Topbar = () => {
-   const navigatae = useNavigate()
-   const [isAdmin, setIsAdmin] = useState(false)
-
-   // useEffect(() => {
-   //    async function checkAdmin() {
-   //       try {
-   //          await userServices.checkGroup("admin").then(function (result) {
-   //             if (result.response && result.response.status == 401) {
-   //                Cookies.remove("jwt-token")
-   //                Navigate("/")
-   //             }
-   //             if (result === true) {
-   //                setIsAdmin(true)
-   //             }
-   //          })
-   //       } catch (e) {
-   //          setIsAdmin(false)
-   //       }
-   //    }
-   //    checkAdmin()
-   // }, [token])
+   const navigate = useNavigate()
+   //handler that calls logout function
+   const handleLogout = async () => {
+      try {
+         await authService.logout(navigate)
+      } catch (error) {
+         toast.error("failed to log out")
+      }
+   }
 
    return (
       <Box display="flex" justifyContent="space-between" p={2}>
@@ -47,7 +36,7 @@ const Topbar = () => {
          </Box>
 
          {/* ICONS */}
-         <Box display="flex">
+         <Box display="flex" justifyContent="space-between" p={2}>
             <IconButton>
                <NotificationsOutlinedIcon />
             </IconButton>
@@ -57,7 +46,7 @@ const Topbar = () => {
             <IconButton>
                <PersonOutlinedIcon />
             </IconButton>
-            <IconButton>
+            <IconButton onClick={handleLogout}>
                <ExitToAppIcon />
             </IconButton>
          </Box>

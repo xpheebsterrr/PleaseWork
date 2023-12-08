@@ -1,6 +1,8 @@
+import React from "react"
 import axios from "axios"
 import Cookies from "js-cookie"
 import { toast } from "react-toastify"
+import { useNavigate } from "react-router-dom"
 import "react-toastify/dist/ReactToastify.css" // Import the CSS for toast styling
 
 const API_URL = "http://localhost:3000/api/v1" // Replace with your API URL
@@ -42,7 +44,7 @@ const login = async (username, password) => {
    }
 }
 
-const logout = async () => {
+const logout = async navigate => {
    const userData = { access_token: Cookies.get("token") }
    try {
       const response = await axios.post(`${API_URL}/logoutUser`, userData)
