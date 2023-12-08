@@ -63,7 +63,7 @@ function CreateUserForm() {
                fullWidth
                label="Group Name"
                name="groupnames"
-               value={newUserData.groupnames}
+               value={newUserData.groupnames ? newUserData.groupnames : "user"}
                onChange={handleInputChange}
             />
          </TableCell>
