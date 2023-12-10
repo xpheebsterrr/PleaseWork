@@ -121,7 +121,7 @@ const EditUser = () => {
       const isEditing = editingUser === user.username
       const currentUserEdits = userEdits[user.username] || {
          ...user,
-         groupnames: user.groupnames.split(",")
+         groupnames: user?.groupnames ? user.groupnames.split(",") : []
       }
 
       return (
