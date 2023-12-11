@@ -46,20 +46,24 @@ const AdminTable = () => {
         // removes password as const and create new object userdata w remaining properties
         //bc user object should not have password field in the first place
 
-        const [newUserData, setNewUserData] = useState({ ...userData }) //Edits done to user
-
+        const [newUserData, setNewUserData] = useState({ ...userData, }) //Edits done to user
         const [groupOptions, setGroupOptions] = useState([])
         const editMode = editingUser == newUserData.username //where user is selected for editing
         console.log("editMode", editMode)
         console.log("userData", userData)
         console.log("newuserData", newUserData)
 
-        // should consider importing lodash library
-        //function sorts the key-value pairs of input objects a and b, convert them to strings and compare them
-        //returns boolean value
-        const isEqual = (a, b) => {
+         // should consider importing lodash library
+         //function sorts the key-value pairs of input objects a and b, convert them to strings and compare them
+         //returns boolean value
+         const isEqual = (a, b) => {
             return Object.entries(a).sort().toString() === Object.entries(b).sort().toString()
-        }
+         }
+
+         // filter out obsolete group names that are still assigned to the user
+         const getFilteredGroupnames = (groupnames, groupOptions) => {
+         return groupnames ? groupnames.split(",").filter(name => groupOptions.includes(name)).join(",") : "";
+         }
 
         const saveChanges = async () => {
             console.log("userData", userData)
@@ -169,7 +173,9 @@ const AdminTable = () => {
                             })
                         }
                     })
-                    setGroupOptions(result.data.map(group => group.groupname))
+                    const newGroupOptions = result.data.map(group => group.groupname)
+                    setGroupOptions(newGroupOptions)
+                    handleEditChange('groupnames', getFilteredGroupnames(userData.groupnames, newGroupOptions))
                 } catch (e) {
                     console.error("TODO")
                 }
