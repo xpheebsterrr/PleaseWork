@@ -51,6 +51,8 @@ const AdminTable = () => {
         const [groupOptions, setGroupOptions] = useState([])
         const editMode = editingUser == newUserData.username //where user is selected for editing
         console.log("editMode", editMode)
+        console.log("userData", userData)
+        console.log("newuserData", newUserData)
 
         // should consider importing lodash library
         //function sorts the key-value pairs of input objects a and b, convert them to strings and compare them
@@ -92,6 +94,7 @@ const AdminTable = () => {
         }
 
         const handleEditChange = (key, value) => {
+            console.log(" newUserData.groupnames.split(", ")", newUserData.groupnames.split(","))
             setNewUserData({
                 ...newUserData,
                 [key]: value

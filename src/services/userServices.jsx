@@ -81,9 +81,14 @@ const createGroup = async groupname => {
     const groupData = { access_token: Cookies.get("token"), groupname }
     try {
         const response = await axios.post(`${API_URL}/createGroup`, groupData)
+        toast.success("Group created successfully")
         return response.data
     } catch (error) {
         console.error("Error creating group:", error)
+        // Show error message
+        if (error.message === "Request failed with status code 500") {
+            toast.error("group exists")
+        }
         throw error
     }
 }
@@ -91,9 +96,7 @@ const createGroup = async groupname => {
 //get all Groups from database
 const getAllGroups = async () => {
     try {
-        const userData = {
-            access_token: Cookies.get("token")
-        }
+        const userData = { access_token: Cookies.get("token") }
         const response = await axios.post(`${API_URL}/getGroup`, userData)
         return response.data
     } catch (error) {
