@@ -46,7 +46,7 @@ const AdminTable = () => {
         // removes password as const and create new object userdata w remaining properties
         //bc user object should not have password field in the first place
 
-        const [newUserData, setNewUserData] = useState({ ...userData, }) //Edits done to user
+        const [newUserData, setNewUserData] = useState({ ...userData, oldGroupnames: userData.groupnames }) //Edits done to user
         const [groupOptions, setGroupOptions] = useState([])
         const editMode = editingUser == newUserData.username //where user is selected for editing
         console.log("editMode", editMode)
@@ -82,7 +82,8 @@ const AdminTable = () => {
                     newUserData.email ?? "", //if null default to empty string
                     newUserData.password, //keep original value
                     newUserData.groupnames ?? "",
-                    newUserData.isActive
+                    newUserData.isActive,
+                    newUserData.oldGroupnames
                 ) // Adjust as per your API
                 toast.success("User updated successfully!")
             } catch (error) {
