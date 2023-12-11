@@ -14,7 +14,7 @@ const Admin = () => {
             <Sidebarr />
             <Box flexGrow={1}>
                <Topbar />
-               <Typography>
+               <Typography component={'div'}>
                   <Typography variant="h4" style={{ margin: "20px 15px" }}>
                      Admin Management
                   </Typography>

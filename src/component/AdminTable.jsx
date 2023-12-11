@@ -245,7 +245,6 @@ const AdminTable = () => {
       <Paper style={{ border: "1px solid #ccc", marginLeft: "15px" }}>
          <Table>
             <colgroup>
-               {/* {" "} */}
                {/* Ensures columns have the same width in head and body */}
                <col style={{ width: "20%" }} />
                <col style={{ width: "20%" }} />
