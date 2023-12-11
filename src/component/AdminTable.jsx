@@ -27,10 +27,6 @@ const AdminTable = () => {
    const [editingUser, setEditingUser] = useState(null) //to track editing user
    const [userEdits, setUserEdits] = useState({}) //New state to track edits
 
-   // store all available group options and currently selected group options
-   const [groupOptions, setGroupOptions] = useState([])
-   const [selectedGroups, setSelectedGroups] = useState([])
-
    //fetch all users on table
    useEffect(() => {
       const fetchUsers = async () => {
@@ -58,82 +54,61 @@ const AdminTable = () => {
             }
          })
    }
-   const handleEditChange = (username, key, value) => {
-      setUserEdits({
-         ...userEdits,
-         [username]: {
-            ...userEdits[username],
-            [key]: value
-         }
-      })
-   }
-   //    const handleIsActiveChange = isActive => {
-   //       handleEditChange(user.username, "isActive", isActive)
-   //    }
-   const handleIsActiveChange = (username, isActive) => {
-      handleEditChange(username, "isActive", isActive)
-   }
-   const saveChanges = async username => {
-      //Logic to save changes
-      const editedUser = userEdits[username]
-      if (!editedUser) {
-         console.warn("No edits made to the user:", username)
-         setEditingUser(null)
-         toggleEditMode(null)
-         return
-      }
-      // Optionally: Update the backend with the edited user data
-      try {
-         const accessToken = Cookies.get("token")
-         await userServices.updateUser(
-            username,
-            editedUser.email,
-            editedUser.password,
-            editedUser.groupnames,
-            editedUser.isActive,
-            accessToken
-         ) // Adjust as per your API
-         toast.success("User updated successfully!")
-      } catch (error) {
-         console.error("Error updating user:", error)
-         toast.error("Failed to update user. Please try again.")
-         return
-      }
-      // Set user that is currently being edited
-      setUsers(
-         users.map(user => {
-            if (user.username === username) {
-               return { ...user, ...editedUser }
-            }
-            return user
-         })
-      )
-
-      // Reset editing state and clear edits for this user
-      setEditingUser(null)
-      setUserEdits(edit => {
-         const newEdits = { ...edit }
-         delete newEdits[username]
-         return newEdits
-      })
-
-      //Update users state and/or send update to backend
-      toggleEditMode(null)
-   }
 
    const UserRow = ({ user }) => {
+      const { password, ...userData } = user
+      const [newUserData, setNewUserData] = useState({...userData})
       const [groupOptions, setGroupOptions] = useState([])
-      const isEditing = editingUser === user.username
-      const currentUserEdits = userEdits[user.username] || {
-         ...user,
-         groupnames: user.groupnames.split(",")
+      const isEditing = editingUser === newUserData.username
+
+      // should consider importing lodash library
+      const isEqual =(a, b) => {
+         return Object.entries(a).sort().toString() === Object.entries(b).sort().toString();
       }
-      console.log("userrow is rendered ", user.username)
+
+      const saveChanges = async () => {
+         //Logic to save changes
+         if (isEqual(user, newUserData)) {
+            console.warn("No edits made to the user:", username)
+            setEditingUser(null)
+            toggleEditMode(null)
+            return
+         }
+         // Optionally: Update the backend with the edited user data
+         try {
+            await userServices.updateUser(
+               newUserData.username ?? "",
+               newUserData.email ?? "",
+               newUserData.password,
+               newUserData.groupnames ?? "",
+               newUserData.isActive
+            ) // Adjust as per your API
+            toast.success("User updated successfully!")
+         } catch (error) {
+            console.error("Error updating user:", error)
+            toast.error("Failed to update user. Please try again.")
+            return
+         }
+
+         setNewUserData({
+            ...user
+         })
+   
+         //Update users state and/or send update to backend
+         toggleEditMode(null)
+      }
+      
+      const handleEditChange = (key, value) => {
+         setNewUserData({
+            ...newUserData,
+            [key]: value
+         })
+      }
 
       useEffect(() => {
          const getGroupOptions = async () => {
             try {
-               const result = await userServices.getAllGroups(user.username).catch(e => {
+               const result = await userServices.getAllGroups(newUserData.username).catch(e => {
                   if (e.response.status === 401) {
                      Cookies.remove("jwt-token")
                      navigate("/")
@@ -156,25 +131,25 @@ const AdminTable = () => {
 
       return (
          <TableRow>
-            <TableCell>{user.username}</TableCell>
+            <TableCell>{newUserData.username}</TableCell>
 
             <TableCell>
                {isEditing ? (
                   <TextField
                      type="email"
-                     defaultValue={currentUserEdits.email}
-                     onChange={e => handleEditChange(user.username, "email", e.target.value)}
+                     defaultValue={newUserData.email}
+                     onChange={e => handleEditChange("email", e.target.value)}
                   />
                ) : (
-                  user.email
+                  newUserData.email
                )}{" "}
             </TableCell>
             <TableCell>
                {isEditing ? (
                   <TextField
                      type="password"
-                     defaultValue={currentUserEdits.password}
-                     onChange={e => handleEditChange(user.username, "password", e.target.value)}
+                     defaultValue={newUserData.password}
+                     onChange={e => handleEditChange("password", e.target.value)}
                      placeholder="********"
                   />
                ) : (
@@ -184,49 +159,45 @@ const AdminTable = () => {
             <TableCell>
                {isEditing ? (
                   <FormControl fullWidth>
-                     <InputLabel id="group-select-label-${user.username}">User Group</InputLabel>
+                     <InputLabel id="group-select-label-${newUserData.username}">User Group</InputLabel>
                      <Select
                         labelId="group-select-label-"
                         multiple
-                        value={currentUserEdits.groupnames.split(",")}
-                        onChange={e => handleEditChange(user.username, "groupnames", e.target.value.join(","))}
-                        //renderValue={selected => selected.join(", ")}
+                        value={newUserData?.groupnames ? newUserData.groupnames.split(",") : []}
+                        onChange={e => handleEditChange("groupnames", e.target.value.join(","))}
                      >
                         {Array.isArray(groupOptions) && groupOptions.map(opt => <MenuItem value={opt}>{opt}</MenuItem>)}
                      </Select>
                   </FormControl>
                ) : (
-                  user.groupnames
+                  newUserData.groupnames
                )}
             </TableCell>
             <TableCell>
                {isEditing ? (
                   <>
                      <Button
-                        variant={currentUserEdits.isActive ? "contained" : "outlined"}
+                        variant={newUserData?.isActive === "active" ? "contained" : "outlined"}
                         color="primary"
-                        onClick={() => handleIsActiveChange(user.username, true)}
+                        onClick={() => handleEditChange("isActive", "active")}
                      >
                         Active
                      </Button>
                      <Button
-                        variant={!currentUserEdits.isActive ? "contained" : "outlined"}
+                        variant={newUserData?.isActive !== "active" ? "contained" : "outlined"}
                         color="secondary"
-                        onClick={() => handleIsActiveChange(user.username, false)}
+                        onClick={() => handleEditChange("isActive", "disabled")}
                      >
                         Inactive
                      </Button>
                   </>
-               ) : user.isActive ? (
-                  "Active"
-               ) : (
-                  "Inactive"
-               )}
+               ) : newUserData?.isActive === "active" ? "Active" : "Inactive"
+               }
             </TableCell>
             <TableCell>
                {isEditing ? (
                   <>
-                     <Button onClick={() => saveChanges(user.username)} variant="contained" color="primary">
+                     <Button onClick={saveChanges} variant="contained" color="primary">
                         Save
                      </Button>
                      <Button onClick={() => toggleEditMode(null)} variant="contained" color="secondary">
@@ -234,7 +205,7 @@ const AdminTable = () => {
                      </Button>
                   </>
                ) : (
-                  <Button onClick={() => toggleEditMode(user.username)} variant="contained" color="primary">
+                  <Button onClick={() => toggleEditMode(newUserData.username)} variant="contained" color="primary">
                      Edit
                   </Button>
                )}
