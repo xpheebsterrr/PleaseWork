@@ -44,7 +44,7 @@ const AdminTable = () => {
       const { password, ...userData } = user // user object should not have password field in the first place
       const [newUserData, setNewUserData] = useState({...userData})
       const [groupOptions, setGroupOptions] = useState([])
-      const isEditing = editingUser === newUserData.username
+      const editMode = editingUser == newUserData.username
 
       // should consider importing lodash library
       const isEqual =(a, b) => {
@@ -56,7 +56,6 @@ const AdminTable = () => {
          if (isEqual(user, newUserData)) {
             console.warn("No edits made to the user:", username)
             setEditingUser(null)
-            toggleEditMode(null)
             return
          }
          // Optionally: Update the backend with the edited user data
@@ -78,16 +77,10 @@ const AdminTable = () => {
          setNewUserData({
             ...user
          })
-   
-         //Update users state and/or send update to backend
-         toggleEditMode(null)
+         setEditingUser(null)
       }
       
       const handleEditChange = (key, value) => {
-         console.log({
-            ...newUserData,
-            [key]: value
-         })
          setNewUserData({
             ...newUserData,
             [key]: value
@@ -174,7 +167,7 @@ const AdminTable = () => {
             <TableCell>{newUserData.username}</TableCell>
 
             <TableCell>
-               {isEditing ? (
+               {editMode ? (
                   <TextField
                      type="email"
                      defaultValue={newUserData.email}
@@ -185,7 +178,7 @@ const AdminTable = () => {
                )}{" "}
             </TableCell>
             <TableCell>
-               {isEditing ? (
+               {editMode ? (
                   <TextField
                      type="password"
                      defaultValue={newUserData.password}
@@ -197,7 +190,7 @@ const AdminTable = () => {
                )}
             </TableCell>
             <TableCell>
-               {isEditing ? (
+               {editMode ? (
                   <FormControl fullWidth>
                      <InputLabel id="group-select-label-${newUserData.username}">User Group</InputLabel>
                      <Select
@@ -223,17 +216,23 @@ const AdminTable = () => {
                </Button>
             </TableCell>
             <TableCell>
-               {isEditing ? (
+               {editMode ? (
                   <>
                      <Button onClick={saveChanges} variant="contained" color="primary">
                         Save
                      </Button>
-                     <Button onClick={() => toggleEditMode(null)} variant="contained" color="secondary">
+                     <Button onClick={() => {
+                           setEditingUser(null)
+                        }} 
+                        variant="contained" color="secondary">
                         Cancel
                      </Button>
                   </>
                ) : (
-                  <Button onClick={() => toggleEditMode(newUserData.username)} variant="contained" color="primary">
+                  <Button onClick={() => {
+                        setEditingUser(newUserData.username)
+                     }} 
+                     variant="contained" color="primary">
                      Edit
                   </Button>
                )}
