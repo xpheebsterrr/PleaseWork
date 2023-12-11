@@ -42,13 +42,13 @@ const AdminTable = () => {
 
    const UserRow = ({ user }) => {
       const { password, ...userData } = user // user object should not have password field in the first place
-      const [newUserData, setNewUserData] = useState({...userData})
+      const [newUserData, setNewUserData] = useState({ ...userData })
       const [groupOptions, setGroupOptions] = useState([])
       const editMode = editingUser == newUserData.username
 
       // should consider importing lodash library
-      const isEqual =(a, b) => {
-         return Object.entries(a).sort().toString() === Object.entries(b).sort().toString();
+      const isEqual = (a, b) => {
+         return Object.entries(a).sort().toString() === Object.entries(b).sort().toString()
       }
 
       const saveChanges = async () => {
@@ -79,7 +79,7 @@ const AdminTable = () => {
          })
          setEditingUser(null)
       }
-      
+
       const handleEditChange = (key, value) => {
          setNewUserData({
             ...newUserData,
@@ -211,6 +211,7 @@ const AdminTable = () => {
                   variant={newUserData.isActive === "active" ? "contained" : "outlined"}
                   color={newUserData.isActive === "active" ? "primary" : "secondary"}
                   onClick={toggleStatus} //toggle the isActive state for the user
+                  disabled={!editMode}
                >
                   {newUserData.isActive === "active" ? "Active" : "Disabled"}
                </Button>
@@ -221,18 +222,24 @@ const AdminTable = () => {
                      <Button onClick={saveChanges} variant="contained" color="primary">
                         Save
                      </Button>
-                     <Button onClick={() => {
+                     <Button
+                        onClick={() => {
                            setEditingUser(null)
-                        }} 
-                        variant="contained" color="secondary">
+                        }}
+                        variant="contained"
+                        color="secondary"
+                     >
                         Cancel
                      </Button>
                   </>
                ) : (
-                  <Button onClick={() => {
+                  <Button
+                     onClick={() => {
                         setEditingUser(newUserData.username)
-                     }} 
-                     variant="contained" color="primary">
+                     }}
+                     variant="contained"
+                     color="primary"
+                  >
                      Edit
                   </Button>
                )}
