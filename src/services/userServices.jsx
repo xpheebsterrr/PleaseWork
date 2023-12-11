@@ -65,8 +65,8 @@ const toggleIsActive = async (username, isActive) => {
 }
 
 //update Users (unable to update username)
-const updateUser = async (username, email, password, groupnames, isActive) => {
-    const userData = { access_token: Cookies.get("token"), username, email, password, groupnames, isActive }
+const updateUser = async (username, email, password, groupnames, isActive, oldGroupnames) => {
+    const userData = { access_token: Cookies.get("token"), username, email, password, groupnames, isActive, oldGroupnames }
     try {
         const response = await axios.put(`${API_URL}/users/:username`, userData)
         return response.data
