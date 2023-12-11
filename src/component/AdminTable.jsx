@@ -19,13 +19,13 @@ import userServices from "../services/userServices.jsx"
 import { toast } from "react-toastify"
 import Cookies from "js-cookie"
 import { useNavigate } from "react-router-dom"
+import axios from "axios"
 
 const AdminTable = () => {
    const navigate = useNavigate()
 
    const [users, setUsers] = useState([])
    const [editingUser, setEditingUser] = useState(null) //to track editing user
-   const [userEdits, setUserEdits] = useState({}) //New state to track edits
 
    //fetch all users on table
    useEffect(() => {
@@ -40,23 +40,8 @@ const AdminTable = () => {
       if (editingUser == null) fetchUsers()
    }, [editingUser])
 
-   //Edit each UserRow
-   const toggleEditMode = username => {
-      const user = users.find(user => user.username == username)
-      setEditingUser(editingUser === username ? null : username)
-      username &&
-         setUserEdits({
-            ...userEdits,
-            [username]: {
-               email: user.email,
-               isActive: user.isActive,
-               groupnames: user.groupnames
-            }
-         })
-   }
-
    const UserRow = ({ user }) => {
-      const { password, ...userData } = user
+      const { password, ...userData } = user // user object should not have password field in the first place
       const [newUserData, setNewUserData] = useState({...userData})
       const [groupOptions, setGroupOptions] = useState([])
       const isEditing = editingUser === newUserData.username
@@ -99,10 +84,65 @@ const AdminTable = () => {
       }
       
       const handleEditChange = (key, value) => {
+         console.log({
+            ...newUserData,
+            [key]: value
+         })
          setNewUserData({
             ...newUserData,
             [key]: value
          })
+      }
+
+      // Handle toggling of activated/disabled status of user
+      const toggleStatus = async () => {
+         try {
+            console.log("username", newUserData.username)
+            console.log("isActive", newUserData.isActive)
+            let result = await axios
+               .put("http://localhost:3000/api/v1/users/:username/toggle-status", {
+                  access_token: Cookies.get("token"),
+                  username: newUserData.username,
+                  isActive: newUserData.isActive
+               })
+               .catch(e => {
+                  if (e.response.status === 401) {
+                     Cookies.remove("token")
+                     navigate("/")
+                  }
+
+                  let error = e.response.data
+                  if (error) {
+                     // Show error message
+                     toast.error(error.message, {
+                        autoClose: false
+                     })
+                  }
+               })
+            if (result) {
+               handleEditChange("isActive", newUserData.isActive === "active" ? "disabled" : "active")
+               toast.success(result.data.message)
+            }
+         } catch (e) {
+            if (e.response.status === 403) {
+               setEditing(false)
+               setRefreshUsers(true)
+               handleEditChange({})
+            }
+
+            if (e.response.status === 401) {
+               Cookies.remove("token")
+               navigate("/")
+            }
+
+            let error = e.response.data
+            if (error) {
+               // Show error message
+               toast.error(error.message, {
+                  autoClose: false
+               })
+            }
+         }
       }
 
       useEffect(() => {
@@ -174,25 +214,13 @@ const AdminTable = () => {
                )}
             </TableCell>
             <TableCell>
-               {isEditing ? (
-                  <>
-                     <Button
-                        variant={newUserData?.isActive === "active" ? "contained" : "outlined"}
-                        color="primary"
-                        onClick={() => handleEditChange("isActive", "active")}
-                     >
-                        Active
-                     </Button>
-                     <Button
-                        variant={newUserData?.isActive !== "active" ? "contained" : "outlined"}
-                        color="secondary"
-                        onClick={() => handleEditChange("isActive", "disabled")}
-                     >
-                        Inactive
-                     </Button>
-                  </>
-               ) : newUserData?.isActive === "active" ? "Active" : "Inactive"
-               }
+               <Button
+                  variant={newUserData.isActive === "active" ? "contained" : "outlined"}
+                  color={newUserData.isActive === "active" ? "primary" : "secondary"}
+                  onClick={toggleStatus} //toggle the isActive state for the user
+               >
+                  {newUserData.isActive === "active" ? "Active" : "Disabled"}
+               </Button>
             </TableCell>
             <TableCell>
                {isEditing ? (
@@ -218,7 +246,7 @@ const AdminTable = () => {
       <Paper style={{ border: "1px solid #ccc", marginLeft: "15px" }}>
          <Table>
             <colgroup>
-               {" "}
+               {/* {" "} */}
                {/* Ensures columns have the same width in head and body */}
                <col style={{ width: "20%" }} />
                <col style={{ width: "20%" }} />
