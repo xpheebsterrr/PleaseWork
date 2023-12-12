@@ -80,14 +80,13 @@ const EditUser = () => {
       }
       // Optionally: Update the backend with the edited user data
       try {
-         const accessToken = Cookies.get("token")
          await userServices.updateUser(
             username,
             editedUser.email,
             editedUser.password,
             editedUser.groupnames,
             editedUser.isActive,
-            accessToken
+            editedUser.oldGroupnames
          ) // Adjust as per your API
          toast.success("User updated successfully!")
       } catch (error) {
