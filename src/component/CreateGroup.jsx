@@ -35,11 +35,16 @@ const CreateGroup = () => {
                 })
             }
         })
-
-        if (result) {
-            console.log("result.data.message", result.data.message)
-            toast.success(result.data.message)
-            setGroupname({})
+        try {
+            if (result) {
+                toast.success(result.data.message)
+                setGroupname({})
+            }
+        } catch (e) {
+            // console.log("result.data.message", result.data.message)
+            toast.error(e, {
+                autoClose: false
+            })
         }
         try {
             if (e.response.status === 401) {

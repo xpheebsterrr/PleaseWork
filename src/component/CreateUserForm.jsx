@@ -35,7 +35,7 @@ function CreateUserForm() {
                 })
                 setGroupOptions(result.data.map(group => group.groupname))
             } catch (e) {
-                console.error("TODO")
+                console.error("CreateUserForm groupOptionsError")
             }
         }
         getGroupOptions()
