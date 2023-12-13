@@ -102,7 +102,12 @@ function CreateUserForm() {
                         value={newUserData?.groupnames ? newUserData.groupnames.split(",") : []}
                         onChange={e => handleDropdownChange("groupnames", e.target.value.join(","))}
                     >
-                        {Array.isArray(groupOptions) && groupOptions.map(opt => <MenuItem value={opt}>{opt}</MenuItem>)}
+                        {Array.isArray(groupOptions) &&
+                            groupOptions.map(opt => (
+                                <MenuItem key={opt} value={opt}>
+                                    {opt}
+                                </MenuItem>
+                            ))}
                     </Select>
                 </FormControl>
             </TableCell>

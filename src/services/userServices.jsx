@@ -5,15 +5,24 @@ import { toast } from "react-toastify"
 const API_URL = "http://localhost:3000/api/v1" // Replace with your API URL
 
 //get all Users from database
-const getAllUsers = async () => {
+const getAllUsers = async navigate => {
     try {
         const userData = {
             access_token: Cookies.get("token"),
             groupnames: "admin"
         }
         const response = await axios.post(`${API_URL}/getUsers`, userData)
+        if (response.data.message === "Error: User is not authorised.") {
+            toast.error("Error: User is not authorised.")
+            Cookies.remove("token")
+            navigate("/")
+        }
         return response.data
     } catch (error) {
+        if (error.response.status === 401) {
+            Cookies.remove("token")
+            navigate("/")
+        }
         console.error("Error fetching users:", error)
         throw error // Propagate error for handling in the calling component
     }
@@ -40,8 +49,11 @@ const createUser = async (username, email, password, groupnames) => {
         console.log("asds", userData)
         const response = await axios.post(`${API_URL}/createUser`, userData)
         const message = response.data.message
+        if (message === "Error: User is not authorised.") {
+            toast.error("Error: User is not authorised.")
+        }
         // Show a toast with the dynamic message
-        toast.success(`${message}`)
+        else toast.success(`${message}`)
         return response.data
     } catch (error) {
         console.error("Error creating user:", error)
