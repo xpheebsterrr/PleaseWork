@@ -11,7 +11,7 @@ const EditUser = () => {
     const [editingUser, setEditingUser] = useState(null) //to track editing user
     const [userEdits, setUserEdits] = useState({}) //New state to track edits
 
-    //fetch all users on table
+    //fetch current user
     useEffect(() => {
         const fetchUser = async () => {
             try {

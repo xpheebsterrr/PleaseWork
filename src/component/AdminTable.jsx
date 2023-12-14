@@ -189,7 +189,7 @@ const AdminTable = () => {
             let verify
             try {
                 verify = await userServices.checkGroup("admin")
-                console.log("verfy", verify)
+                console.log("verify user", verify)
             } catch (e) {
                 console.log("failed", e)
                 navigate("/dashboard")
@@ -239,7 +239,12 @@ const AdminTable = () => {
                                 value={newUserData?.groupnames ? newUserData.groupnames.split(",") : []}
                                 onChange={e => handleEditChange("groupnames", e.target.value.join(","))}
                             >
-                                {Array.isArray(groupOptions) && groupOptions.map(opt => <MenuItem value={opt}>{opt}</MenuItem>)}
+                                {Array.isArray(groupOptions) &&
+                                    groupOptions.map(opt => (
+                                        <MenuItem key={opt} value={opt}>
+                                            {opt}
+                                        </MenuItem>
+                                    ))}
                             </Select>
                         </FormControl>
                     ) : (

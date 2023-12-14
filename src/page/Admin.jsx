@@ -10,17 +10,16 @@ const Admin = () => {
         <Container maxWidth="xl" disableGutters>
             <Box display="flex" height="100vh">
                 {" "}
-                {/* Full viewport height */}
                 <Sidebarr />
                 <Box flexGrow={1}>
                     <Topbar />
-                    <Typography component={"div"}>
-                        <Typography variant="h4" style={{ margin: "20px 15px" }}>
+                    <Box display="flex" alignItems="center" style={{ margin: "20px 15px" }}>
+                        <Typography variant="h4" component="div" style={{ flexGrow: 1 }}>
                             Admin Management
                         </Typography>
                         <CreateGroup />
-                        <AdminTable />
-                    </Typography>
+                    </Box>
+                    <AdminTable />
                 </Box>
             </Box>
         </Container>

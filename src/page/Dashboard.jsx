@@ -2,7 +2,9 @@ import React from "react"
 import Topbar from "../component/topbar.jsx"
 import Sidebarr from "../component/sidebar.jsx"
 import { Container, Box, Typography } from "@mui/material"
-import EditUser from "../component/EditUser.jsx"
+import AdminTable from "../component/AdminTable.jsx"
+import AppTable from "../component/AppTable.jsx"
+import CreateApp from "../component/CreateApp.jsx"
 
 const Dashboard = () => {
     return (
@@ -13,7 +15,13 @@ const Dashboard = () => {
                 <Sidebarr />
                 <Box flexGrow={1}>
                     <Topbar />
-                    <Typography>The Task Management System goes here</Typography>
+                    <Box display="flex" alignItems="center" style={{ margin: "20px 15px" }}>
+                        <Typography variant="h4" component="div" style={{ flexGrow: 1 }}>
+                            Application List
+                        </Typography>
+                        <CreateApp />
+                    </Box>
+                    <AppTable />
                 </Box>
             </Box>
         </Container>
