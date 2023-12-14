@@ -119,7 +119,7 @@ const CreateApp = () => {
                             />
                             <Box display="flex" gap={2} mt={2} mb={2}>
                                 <TextField
-                                    name="from"
+                                    name="App_startDate"
                                     label="From"
                                     type="date"
                                     value={appData.App_startDate}
@@ -127,7 +127,7 @@ const CreateApp = () => {
                                     InputLabelProps={{ shrink: true }}
                                 />
                                 <TextField
-                                    name="to"
+                                    name="App_endDate"
                                     label="To"
                                     type="date"
                                     value={appData.App_endDate}
@@ -137,7 +137,7 @@ const CreateApp = () => {
                             </Box>
                             <TextField
                                 margin="dense"
-                                name="description"
+                                name="App_Description"
                                 label="Description"
                                 type="text"
                                 fullWidth
@@ -190,7 +190,7 @@ const CreateApp = () => {
                                     <FormControl fullWidth margin="dense">
                                         <InputLabel>Choose Group</InputLabel>
                                         <Select
-                                            name="createTask"
+                                            name="App_permit_Create"
                                             value={appData.App_permit_Create}
                                             onChange={handleDropdownChange}
                                         >
@@ -205,7 +205,11 @@ const CreateApp = () => {
                                     {/* ...other user groups */}
                                     <FormControl fullWidth margin="dense">
                                         <InputLabel>Choose Group</InputLabel>
-                                        <Select name="openState" value={appData.App_permit_Open} onChange={handleDropdownChange}>
+                                        <Select
+                                            name="App_permit_Open"
+                                            value={appData.App_permit_Open}
+                                            onChange={handleDropdownChange}
+                                        >
                                             {Array.isArray(groupOptions) &&
                                                 groupOptions.map(opt => (
                                                     <MenuItem key={opt} value={opt}>
@@ -217,7 +221,7 @@ const CreateApp = () => {
                                     <FormControl fullWidth margin="dense">
                                         <InputLabel>Choose Group</InputLabel>
                                         <Select
-                                            name="toDoState"
+                                            name="App_permit_toDoList"
                                             value={appData.App_permit_toDoList}
                                             onChange={handleDropdownChange}
                                         >
@@ -232,7 +236,7 @@ const CreateApp = () => {
                                     <FormControl fullWidth margin="dense">
                                         <InputLabel>Choose Group</InputLabel>
                                         <Select
-                                            name="doingState"
+                                            name="App_permit_Doing"
                                             value={appData.App_permit_Doing}
                                             onChange={handleDropdownChange}
                                         >
@@ -246,7 +250,11 @@ const CreateApp = () => {
                                     </FormControl>
                                     <FormControl fullWidth margin="dense">
                                         <InputLabel>Choose Group</InputLabel>
-                                        <Select name="doneState" value={appData.App_permit_Done} onChange={handleDropdownChange}>
+                                        <Select
+                                            name="App_permit_Done"
+                                            value={appData.App_permit_Done}
+                                            onChange={handleDropdownChange}
+                                        >
                                             {Array.isArray(groupOptions) &&
                                                 groupOptions.map(opt => (
                                                     <MenuItem key={opt} value={opt}>
