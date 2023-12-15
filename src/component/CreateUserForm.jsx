@@ -53,23 +53,15 @@ function CreateUserForm() {
         })
     }
 
-    const handleCheckboxChange = event => {
-        setNewUserData({ ...newUserData, [event.target.name]: event.target.checked })
-    }
+    //  const handleCheckboxChange = event => {
+    //      setNewUserData({ ...newUserData, [event.target.name]: event.target.checked })
+    //  }
 
     const handleSubmit = async event => {
         event.preventDefault()
         try {
-            // Retrieve the access token from cookies
-            const accessToken = Cookies.get("token")
             // Call createUser with all necessary data
-            await userServices.createUser(
-                newUserData.username,
-                newUserData.email,
-                newUserData.password,
-                newUserData.groupnames,
-                accessToken //Passing the access token
-            )
+            await userServices.createUser(newUserData.username, newUserData.email, newUserData.password, newUserData.groupnames)
         } catch (error) {
             console.error("Unexpected error in handleSubmit:", error)
         }

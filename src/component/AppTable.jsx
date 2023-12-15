@@ -27,7 +27,7 @@ const AppTable = () => {
 
     //fetch all users on table
     useEffect(() => {
-        const fetchUsers = async () => {
+        const fetchApps = async () => {
             try {
                 const data = await appService.getAllApps()
                 setApps(data.data) //response is an array of users
@@ -35,7 +35,7 @@ const AppTable = () => {
                 console.error("Error fetching apps:", error)
             }
         } // fetch users from database
-        fetchUsers()
+        fetchApps()
     }, [])
 
     //Each row of users
@@ -45,12 +45,10 @@ const AppTable = () => {
                 <TableCell>{app.App_Acronym}</TableCell>
                 <TableCell>{app.App_startDate}</TableCell>
                 <TableCell>{app.App_endDate}</TableCell>
-                <TableCell>
-                    <Button variant="contained" color="primary">
+                <TableCell align="right">
+                    <Button variant="contained" color="primary" style={{ marginRight: "25px" }}>
                         Edit
                     </Button>
-                </TableCell>
-                <TableCell>
                     <Button variant="contained" color="primary">
                         View
                     </Button>
@@ -60,7 +58,15 @@ const AppTable = () => {
     }
 
     return (
-        <Paper style={{ border: "1px solid #ccc", marginLeft: "15px" }}>
+        <Paper
+            style={{
+                border: "1px solid #ccc",
+                marginLeft: "15px"
+                // width: "80%"
+                // marginRight: "auto", // Optional: Center the Paper
+                // marginLeft: "auto"
+            }}
+        >
             <Table>
                 <colgroup>
                     {/* Ensures columns have the same width in head and body */}
@@ -73,7 +79,6 @@ const AppTable = () => {
                         <TableCell>App acro</TableCell>
                         <TableCell>Start Date</TableCell>
                         <TableCell>End Date</TableCell>
-                        <TableCell> </TableCell>
                         <TableCell> </TableCell>
                     </TableRow>
                 </TableHead>

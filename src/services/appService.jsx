@@ -28,6 +28,51 @@ const getAllApps = async () => {
     }
 }
 
+//create app
+const createApp = async (
+    App_Acronym,
+    App_Rnumber,
+    App_startDate,
+    App_endDate,
+    App_Description,
+    App_permit_Create,
+    App_permit_Open,
+    App_permit_toDoList,
+    App_permit_Doing,
+    App_permit_Done
+) => {
+    const appData = {
+        access_token: Cookies.get("token"),
+        App_Acronym,
+        App_Rnumber,
+        App_startDate,
+        App_endDate,
+        App_Description,
+        App_permit_Create,
+        App_permit_Open,
+        App_permit_toDoList,
+        App_permit_Doing,
+        App_permit_Done
+    }
+    try {
+        console.log("asds", appData)
+        const response = await axios.post(`${API_URL}/createApp`, appData)
+        const message = response.data.message
+        if (message === "Error: User is not authorised.") {
+            toast.error("Error: User is not authorised.")
+        }
+        // Show a toast with the dynamic message
+        else toast.success(`${message}`)
+        return response.data
+    } catch (error) {
+        console.error("Error creating App:", error)
+        const errorMessage = error.response?.data?.message || "Failed to create App. Please try again."
+        // Show an error toast with the dynamic error message
+        toast.error(errorMessage)
+        throw error
+    }
+}
+
 //get User from database
 const getUser = async () => {
     try {
@@ -39,28 +84,6 @@ const getUser = async () => {
     } catch (error) {
         console.error("Error fetching user:", error)
         throw error // Propagate error for handling in the calling component
-    }
-}
-
-//create user
-const createUser = async (username, email, password, groupnames) => {
-    const appData = { access_token: Cookies.get("token"), username, email, password, groupnames }
-    try {
-        console.log("asds", appData)
-        const response = await axios.post(`${API_URL}/createUser`, appData)
-        const message = response.data.message
-        if (message === "Error: User is not authorised.") {
-            toast.error("Error: User is not authorised.")
-        }
-        // Show a toast with the dynamic message
-        else toast.success(`${message}`)
-        return response.data
-    } catch (error) {
-        console.error("Error creating user:", error)
-        const errorMessage = error.response?.data?.message || "Failed to create user. Please try again."
-        // Show an error toast with the dynamic error message
-        toast.error(errorMessage)
-        throw error
     }
 }
 
@@ -131,7 +154,7 @@ const checkGroup = async groupnames => {
 
 export default {
     getAllApps,
-    createUser,
+    createApp,
     toggleIsActive,
     updateUser,
     createGroup,

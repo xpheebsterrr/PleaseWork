@@ -18,7 +18,7 @@ import userServices from "../services/userServices.jsx"
 import { toast } from "react-toastify"
 import appService from "../services/appService.jsx"
 
-const CreateApp = () => {
+const ViewApp = () => {
     const [open, setOpen] = useState(false)
     const [appData, setAppData] = useState({
         App_Acronym: "",
@@ -26,37 +26,12 @@ const CreateApp = () => {
         App_startDate: "",
         App_endDate: "",
         App_Description: "",
-        App_permit_Create: "",
         App_permit_Open: "",
         App_permit_toDoList: "",
         App_permit_Doing: "",
         App_permit_Done: ""
+        //App_permit_Create: "", (hardcoded to project lead)
     })
-    const [groupOptions, setGroupOptions] = useState([])
-    //Get Group options, in an array of objects
-    useEffect(() => {
-        const getGroupOptions = async () => {
-            try {
-                const result = await userServices.getAllGroups()
-                setGroupOptions(result.data.map(a => a.groupname))
-                // const newGroupOptions = result.data.map(group => group.groupname)
-                // setGroupOptions(newGroupOptions)
-                // handleEditChange("groupnames", getFilteredGroupnames(userData.groupnames, newGroupOptions))
-            } catch (e) {
-                //Error handling: e is the error object
-                console.error("error getting group", e)
-                if (e.response && e.response.data) {
-                    //if there is response w error data
-                    toast.error(e.response.data.message)
-                } else {
-                    //error w no response eg. network error
-                    toast.error("An unexpected error occured")
-                }
-            }
-        }
-        getGroupOptions()
-    }, [])
-    console.log("groupOptions", groupOptions)
 
     //Form overlay operations
     const handleClickOpen = () => {
@@ -66,56 +41,11 @@ const CreateApp = () => {
         setOpen(false)
     }
 
-    //Form operations
-
-    // const handleChange = event => {
-    //     const { name, value } = event.target
-    //     setAppData(prev => ({
-    //         ...prev,
-    //         [name]: value
-    //     }))
-    // }
-
-    const handleChange = event => {
-        const { name, value } = event.target
-        setAppData({
-            ...appData,
-            [name]: value
-        })
-    }
     console.log("appData", appData)
-    const handleDropdownChange = (key, value) => {
-        setAppData({
-            ...appData,
-            [key]: value
-        })
-        console.log("appDataDropDown", appData)
-    }
-
-    const handleSubmit = async event => {
-        event.preventDefault()
-        try {
-            await appService.createApp(
-                appData.App_Acronym,
-                appData.App_Rnumber,
-                appData.App_startDate,
-                appData.App_endDate,
-                appData.App_Description,
-                appData.App_permit_Create,
-                appData.App_permit_Open,
-                appData.App_permit_toDoList,
-                appData.App_permit_Doing,
-                appData.App_permit_Done
-            )
-        } catch (error) {
-            console.error("Unexpected error in handleSubmit", error)
-        }
-        setOpen(false)
-    }
 
     return (
         <div>
-            <Button variant="outlined" onClick={handleClickOpen}>
+            <Button variant="contained" color="primary" style={{ marginRight: "25px" }} onClick={handleClickOpen}>
                 Create App
             </Button>
             <Dialog
@@ -216,22 +146,7 @@ const CreateApp = () => {
                                     {/* User Groups Selects */}
                                     <Typography variant="subtitle1">User Groups</Typography>
                                     {/* Repeat the following for each user group */}
-                                    <FormControl fullWidth margin="dense">
-                                        <InputLabel>Choose Group</InputLabel>
-                                        <Select
-                                            name="App_permit_Create"
-                                            value={appData.App_permit_Create}
-                                            onChange={e => handleDropdownChange("App_permit_Create", e.target.value)}
-                                        >
-                                            {Array.isArray(groupOptions) &&
-                                                groupOptions.map(opt => (
-                                                    <MenuItem key={opt} value={opt}>
-                                                        {opt}
-                                                    </MenuItem>
-                                                ))}
-                                        </Select>
-                                    </FormControl>
-                                    {/* <Box
+                                    <Box
                                         margin="dense"
                                         border={1}
                                         borderColor="lightgray"
@@ -244,7 +159,7 @@ const CreateApp = () => {
                                         <Typography variant="body1" color="textSecondary">
                                             {"Project Lead"}
                                         </Typography>
-                                    </Box> */}
+                                    </Box>
                                     {/* ...other user groups */}
                                     <FormControl fullWidth margin="dense">
                                         <InputLabel id="group-select-label-${appData.username}">Choose Group</InputLabel>
@@ -325,4 +240,4 @@ const CreateApp = () => {
     )
 }
 
-export default CreateApp
+export default ViewApp
