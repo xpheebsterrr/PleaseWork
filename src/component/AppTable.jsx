@@ -17,6 +17,10 @@ import userServices from "../services/userServices.jsx"
 import appService from "../services/appService.jsx"
 import { toast } from "react-toastify"
 import { useNavigate } from "react-router-dom"
+import ViewApp from "./ViewApp.jsx"
+import EditApp from "./EditApp.jsx"
+import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined"
+import styled from "@emotion/styled"
 
 const AppTable = () => {
     const navigate = useNavigate()
@@ -38,6 +42,20 @@ const AppTable = () => {
         fetchApps()
     }, [])
 
+    const enterApp = () => {
+        navigate("/appPage")
+    }
+    // Styled icon with animation
+    const ArrowIcon = styled(ArrowForwardOutlinedIcon)`
+        margin-left: 25px;
+        transition: transform 0.3s ease;
+
+        &:hover {
+            transform: scale(1.2); // Scale up on hover
+            cursor: pointer;
+        }
+    `
+
     //Each row of users
     const AppRow = ({ app }) => {
         return (
@@ -45,13 +63,13 @@ const AppTable = () => {
                 <TableCell>{app.App_Acronym}</TableCell>
                 <TableCell>{app.App_startDate}</TableCell>
                 <TableCell>{app.App_endDate}</TableCell>
-                <TableCell align="right">
-                    <Button variant="contained" color="primary" style={{ marginRight: "25px" }}>
+                <TableCell align="right" style={{ display: "flex", alignItems: "center" }}>
+                    <ArrowIcon onClick={enterApp} />
+                    <ViewApp app={app} />
+                    {/* <Button variant="contained" color="primary" style={{ marginRight: "25px" }}>
                         Edit
-                    </Button>
-                    <Button variant="contained" color="primary">
-                        View
-                    </Button>
+                    </Button> */}
+                    <EditApp app={app} />
                 </TableCell>
             </TableRow>
         )

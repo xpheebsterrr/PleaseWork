@@ -73,6 +73,47 @@ const createApp = async (
     }
 }
 
+//create app
+const updateApp = async (
+    App_Acronym,
+    App_startDate,
+    App_endDate,
+    App_Description,
+    App_permit_Create,
+    App_permit_Open,
+    App_permit_toDoList,
+    App_permit_Doing,
+    App_permit_Done
+) => {
+    const appData = {
+        access_token: Cookies.get("token"),
+        App_Acronym,
+        App_startDate,
+        App_endDate,
+        App_Description,
+        App_permit_Create,
+        App_permit_Open,
+        App_permit_toDoList,
+        App_permit_Doing,
+        App_permit_Done
+    }
+    try {
+        const response = await axios.put(`${API_URL}/updateApp`, appData)
+        const message = response.data.message
+        if (message === "Error: User is not authorised.") {
+            toast.error("Error: User is not authorised.")
+        }
+        // Show a toast with the dynamic message
+        else toast.success(`${message}`)
+        return response.data
+    } catch (error) {
+        console.error("Error updating App:", error)
+        const errorMessage = error.response?.data?.message || "Failed to update App. Please try again."
+        // Show an error toast with the dynamic error message
+        toast.error(errorMessage)
+        throw error
+    }
+}
 //get User from database
 const getUser = async () => {
     try {
@@ -84,30 +125,6 @@ const getUser = async () => {
     } catch (error) {
         console.error("Error fetching user:", error)
         throw error // Propagate error for handling in the calling component
-    }
-}
-
-//toggle isActive
-const toggleIsActive = async (username, isActive) => {
-    const appData = { access_token: Cookies.get("token"), isActive }
-    try {
-        const response = await axios.put(`${API_URL}/toggle-status`, appData)
-        return response.data
-    } catch (error) {
-        console.error("Error toggling isActive:", error)
-        throw error
-    }
-}
-
-//update Users (unable to update username)
-const updateUser = async (username, email, password, groupnames, isActive, oldGroupnames) => {
-    const appData = { access_token: Cookies.get("token"), username, email, password, groupnames, isActive, oldGroupnames }
-    try {
-        const response = await axios.put(`${API_URL}/users/:username`, appData)
-        return response.data
-    } catch (error) {
-        console.error("Error updating user:", error)
-        throw error
     }
 }
 
@@ -155,8 +172,7 @@ const checkGroup = async groupnames => {
 export default {
     getAllApps,
     createApp,
-    toggleIsActive,
-    updateUser,
+    updateApp,
     createGroup,
     checkGroup,
     getAllGroups,

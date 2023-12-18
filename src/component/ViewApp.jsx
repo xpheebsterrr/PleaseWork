@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react"
+// import { makeStyles } from "@mui/styles"
+import { styled } from "@mui/system"
 import {
     Button,
     TextField,
@@ -14,25 +16,43 @@ import {
     FormControl,
     InputLabel
 } from "@mui/material"
-import userServices from "../services/userServices.jsx"
-import { toast } from "react-toastify"
-import appService from "../services/appService.jsx"
 
-const ViewApp = () => {
+// const useStyles = makeStyles(theme => ({
+//     infoText: {
+//         marginBottom: "16px",
+//         fontSize: "1rem" // Adjust the font size as needed
+//     }
+// }))
+
+const StyledTypography = styled(Typography)`
+    padding: 18.5px 14px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.23);
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: #fff;
+    display: block;
+
+    strong {
+        margin-right: 8px;
+    }
+`
+const StyledDateDisplay = styled(Typography)`
+    padding: 18.5px 14px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.23);
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: #fff;
+    min-width: 0; // To ensure it flexes inside a flex container
+    flex-grow: 1; // Allow it to grow
+    box-sizing: border-box; // Adjust box model
+    display: flex;
+    align-items: center; // Center the text vertically
+`
+
+const ViewApp = ({ app }) => {
     const [open, setOpen] = useState(false)
-    const [appData, setAppData] = useState({
-        App_Acronym: "",
-        App_Rnumber: "",
-        App_startDate: "",
-        App_endDate: "",
-        App_Description: "",
-        App_permit_Open: "",
-        App_permit_toDoList: "",
-        App_permit_Doing: "",
-        App_permit_Done: ""
-        //App_permit_Create: "", (hardcoded to project lead)
-    })
-
     //Form overlay operations
     const handleClickOpen = () => {
         setOpen(true)
@@ -41,12 +61,12 @@ const ViewApp = () => {
         setOpen(false)
     }
 
-    console.log("appData", appData)
+    console.log("Inside app", app)
 
     return (
         <div>
-            <Button variant="contained" color="primary" style={{ marginRight: "25px" }} onClick={handleClickOpen}>
-                Create App
+            <Button variant="contained" color="primary" onClick={handleClickOpen}>
+                View
             </Button>
             <Dialog
                 open={open}
@@ -60,83 +80,58 @@ const ViewApp = () => {
                     <Grid container spacing={5}>
                         {/* Left column content */}
                         <Grid item xs={12} md={6} style={{ paddingRight: "32px" }}>
-                            <TextField
-                                autoFocus
-                                margin="dense"
-                                name="App_Acronym"
-                                label="App_Acronym"
-                                type="text"
-                                fullWidth
-                                style={{ marginBottom: "16px" }}
-                                value={appData.App_Acronym}
-                                onChange={handleChange}
-                            />
-                            <TextField
-                                margin="dense"
-                                name="App_Rnumber"
-                                label="App_Rnumber"
-                                type="number"
-                                fullWidth
-                                value={appData.App_Rnumber}
-                                onChange={handleChange}
-                            />
+                            <StyledTypography>
+                                <strong>App Acronym:</strong> {app.App_Acronym}
+                            </StyledTypography>
+                            <StyledTypography>
+                                <strong>App Acronym:</strong> {app.App_Rnumber}
+                            </StyledTypography>
                             <Box display="flex" gap={2} mt={2} mb={2}>
-                                <TextField
-                                    name="App_startDate"
-                                    label="From"
-                                    type="date"
-                                    value={appData.App_startDate}
-                                    onChange={handleChange}
-                                    InputLabelProps={{ shrink: true }}
-                                />
-                                <TextField
-                                    name="App_endDate"
-                                    label="To"
-                                    type="date"
-                                    value={appData.App_endDate}
-                                    onChange={handleChange}
-                                    InputLabelProps={{ shrink: true }}
-                                />
+                                <StyledDateDisplay>
+                                    <strong>From: &nbsp;</strong> {app.App_startDate}
+                                </StyledDateDisplay>
+                                <StyledDateDisplay>
+                                    <strong>To: &nbsp;</strong> {app.App_endDate}
+                                </StyledDateDisplay>
                             </Box>
+                            <StyledTypography>
+                                <strong>App Acronym:</strong> {app.App_Acronym}
+                            </StyledTypography>
                             <TextField
                                 margin="dense"
                                 name="App_Description"
                                 label="Description"
                                 type="text"
-                                fullWidth
+                                // fullWidth
                                 multiline
                                 rows={4}
-                                value={appData.App_Description}
-                                onChange={handleChange}
+                                defaultValue={app.App_Description}
+                                disabled
                             />
                         </Grid>
                         {/* Right column content */}
                         <Grid item xs={12} md={6} style={{ paddingLeft: "32px" }}>
                             <Grid container spacing={2}>
-                                {/* Permissions */}
                                 <Grid item xs={6}>
-                                    {/* Permissions Selects */}
                                     <Typography variant="subtitle1">Permissions</Typography>
-                                    {/* Repeat the following for each permission */}
-                                    {/* Create Tasks Display */}
-                                    <Box mt={3} mb={5.5}>
+                                    <Box mt={3} mb={5}>
                                         {" "}
                                         {/* Adjust margin-bottom as needed */}
                                         <Typography variant="body1">Create Tasks:</Typography>
                                     </Box>
-                                    <Box mt={4} mb={4}>
+                                    <Box mt={3} mb={4}>
                                         {" "}
                                         <Typography variant="body1">Open State:</Typography>
                                     </Box>
-                                    <Box mt={5.5} mb={5}>
+                                    <Box mt={3.5} mb={5}>
                                         {" "}
                                         <Typography variant="body1">To do State:</Typography>
                                     </Box>
-                                    <Box mt={5.5} mb={6}>
+                                    <Box mt={3.5} mb={5}>
                                         {" "}
                                         <Typography variant="body1">Doing State:</Typography>
                                     </Box>
-                                    <Box mt={4} mb={6}>
+                                    <Box mt={3.5} mb={6}>
                                         {" "}
                                         <Typography variant="body1">Done State:</Typography>
                                     </Box>
@@ -152,76 +147,71 @@ const ViewApp = () => {
                                         borderColor="lightgray"
                                         borderRadius={4}
                                         p={1}
-                                        mb={1.5}
+                                        mb={2.5}
                                         mt={2}
-                                        fullWidth
+                                        // fullWidth
                                     >
                                         <Typography variant="body1" color="textSecondary">
-                                            {"Project Lead"}
+                                            {app.App_permit_Create}
+                                            {""}
                                         </Typography>
                                     </Box>
-                                    {/* ...other user groups */}
-                                    <FormControl fullWidth margin="dense">
-                                        <InputLabel id="group-select-label-${appData.username}">Choose Group</InputLabel>
-                                        <Select
-                                            labelId="group-select-label-${appData.username}"
-                                            name="App_permit_Open"
-                                            value={appData.App_permit_Open}
-                                            onChange={e => handleDropdownChange("App_permit_Open", e.target.value)}
-                                        >
-                                            {Array.isArray(groupOptions) &&
-                                                groupOptions.map(opt => (
-                                                    <MenuItem key={opt} value={opt}>
-                                                        {opt}
-                                                    </MenuItem>
-                                                ))}
-                                        </Select>
-                                    </FormControl>
-                                    <FormControl fullWidth margin="dense">
-                                        <InputLabel>Choose Group</InputLabel>
-                                        <Select
-                                            name="App_permit_toDoList"
-                                            value={appData.App_permit_toDoList}
-                                            onChange={e => handleDropdownChange(e.target.name, e.target.value)}
-                                        >
-                                            {Array.isArray(groupOptions) &&
-                                                groupOptions.map(opt => (
-                                                    <MenuItem key={opt} value={opt}>
-                                                        {opt}
-                                                    </MenuItem>
-                                                ))}
-                                        </Select>
-                                    </FormControl>
-                                    <FormControl fullWidth margin="dense">
-                                        <InputLabel>Choose Group</InputLabel>
-                                        <Select
-                                            name="App_permit_Doing"
-                                            value={appData.App_permit_Doing}
-                                            onChange={e => handleDropdownChange(e.target.name, e.target.value)}
-                                        >
-                                            {Array.isArray(groupOptions) &&
-                                                groupOptions.map(opt => (
-                                                    <MenuItem key={opt} value={opt}>
-                                                        {opt}
-                                                    </MenuItem>
-                                                ))}
-                                        </Select>
-                                    </FormControl>
-                                    <FormControl fullWidth margin="dense">
-                                        <InputLabel>Choose Group</InputLabel>
-                                        <Select
-                                            name="App_permit_Done"
-                                            value={appData.App_permit_Done}
-                                            onChange={e => handleDropdownChange(e.target.name, e.target.value)}
-                                        >
-                                            {Array.isArray(groupOptions) &&
-                                                groupOptions.map(opt => (
-                                                    <MenuItem key={opt} value={opt}>
-                                                        {opt}
-                                                    </MenuItem>
-                                                ))}
-                                        </Select>
-                                    </FormControl>
+                                    <Box
+                                        margin="dense"
+                                        border={1}
+                                        borderColor="lightgray"
+                                        borderRadius={4}
+                                        p={1}
+                                        mb={2.5}
+                                        mt={2}
+                                        // fullWidth
+                                    >
+                                        <Typography variant="body1" color="textSecondary">
+                                            {app.App_permit_Open}
+                                        </Typography>
+                                    </Box>
+                                    <Box
+                                        margin="dense"
+                                        border={1}
+                                        borderColor="lightgray"
+                                        borderRadius={4}
+                                        p={1}
+                                        mb={2.5}
+                                        mt={2}
+                                        // fullWidth
+                                    >
+                                        <Typography variant="body1" color="textSecondary">
+                                            {app.App_permit_toDoList}
+                                        </Typography>
+                                    </Box>
+                                    <Box
+                                        margin="dense"
+                                        border={1}
+                                        borderColor="lightgray"
+                                        borderRadius={4}
+                                        p={1}
+                                        mb={2.5}
+                                        mt={2}
+                                        // fullWidth
+                                    >
+                                        <Typography variant="body1" color="textSecondary">
+                                            {app.App_permit_Doing}
+                                        </Typography>
+                                    </Box>
+                                    <Box
+                                        margin="dense"
+                                        border={1}
+                                        borderColor="lightgray"
+                                        borderRadius={4}
+                                        p={1}
+                                        mb={2.5}
+                                        mt={2}
+                                        // fullWidth
+                                    >
+                                        <Typography variant="body1" color="textSecondary">
+                                            {app.App_permit_Done}
+                                        </Typography>
+                                    </Box>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -230,9 +220,6 @@ const ViewApp = () => {
                 <DialogActions>
                     <Button onClick={handleClose} color="primary">
                         Cancel
-                    </Button>
-                    <Button onClick={handleSubmit} color="primary">
-                        Create
                     </Button>
                 </DialogActions>
             </Dialog>

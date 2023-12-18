@@ -231,21 +231,6 @@ const CreateApp = () => {
                                                 ))}
                                         </Select>
                                     </FormControl>
-                                    {/* <Box
-                                        margin="dense"
-                                        border={1}
-                                        borderColor="lightgray"
-                                        borderRadius={4}
-                                        p={1}
-                                        mb={1.5}
-                                        mt={2}
-                                        fullWidth
-                                    >
-                                        <Typography variant="body1" color="textSecondary">
-                                            {"Project Lead"}
-                                        </Typography>
-                                    </Box> */}
-                                    {/* ...other user groups */}
                                     <FormControl fullWidth margin="dense">
                                         <InputLabel id="group-select-label-${appData.username}">Choose Group</InputLabel>
                                         <Select

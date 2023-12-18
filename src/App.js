@@ -6,6 +6,7 @@ import Dashboard from "./page/Dashboard.jsx"
 import Admin from "./page/Admin.jsx"
 import { ToastContainer } from "react-toastify"
 import ProfilePage from "./page/ProfilePage.jsx"
+import AppPage from "./page/AppPage.jsx"
 
 const theme = createTheme({
     palette: {
@@ -36,8 +37,9 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Login />} />
                     <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/admin" element={<Admin />} />
                     <Route path="/profilePage" element={<ProfilePage />} />
+                    <Route path="/admin" element={<Admin />} />
+                    <Route path="/appPage" element={<AppPage />} />
                 </Routes>
             </BrowserRouter>
             <ToastContainer closeOnClick theme="colored" autoClose={1000} />
