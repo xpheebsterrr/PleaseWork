@@ -33,7 +33,8 @@ const KanbanColumn = ({ title, tasks }) => {
     )
 }
 
-const KanbanBoard = () => {
+const KanbanBoard = ({ currentApp }) => {
+    console.log("kanban app", currentApp)
     // Sample tasks for demonstration
     const tasks = {
         open: [

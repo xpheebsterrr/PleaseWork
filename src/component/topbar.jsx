@@ -40,9 +40,6 @@ const Topbar = () => {
         getUser()
     }, [])
 
-    console.log("user", user)
-    console.log("user.username", user.username)
-
     return (
         <Box display="flex" justifyContent="space-between" p={2}>
             {/* SEARCH BAR */}

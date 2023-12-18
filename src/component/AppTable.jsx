@@ -1,21 +1,6 @@
 import React, { useState, useEffect } from "react"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
-    Paper,
-    Button,
-    Select,
-    MenuItem,
-    InputLabel,
-    FormControl,
-    TextField
-} from "@mui/material"
-import userServices from "../services/userServices.jsx"
+import { Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material"
 import appService from "../services/appService.jsx"
-import { toast } from "react-toastify"
 import { useNavigate } from "react-router-dom"
 import ViewApp from "./ViewApp.jsx"
 import EditApp from "./EditApp.jsx"
@@ -23,12 +8,7 @@ import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined"
 import styled from "@emotion/styled"
 
 const AppTable = () => {
-    const navigate = useNavigate()
-
     const [apps, setApps] = useState([]) //store all apps
-    const [users, setUsers] = useState([]) //store all users
-    const [editingUser, setEditingUser] = useState(null) //to track editing user (isEditingUser)
-
     //fetch all users on table
     useEffect(() => {
         const fetchApps = async () => {
@@ -42,9 +22,6 @@ const AppTable = () => {
         fetchApps()
     }, [])
 
-    const enterApp = () => {
-        navigate("/appPage")
-    }
     // Styled icon with animation
     const ArrowIcon = styled(ArrowForwardOutlinedIcon)`
         margin-left: 25px;
@@ -55,16 +32,21 @@ const AppTable = () => {
             cursor: pointer;
         }
     `
-
     //Each row of users
     const AppRow = ({ app }) => {
+        const navigate = useNavigate()
+        const enterApp = app => {
+            console.log("app is: ", app)
+            // navigate(`/appPage/${app.App_Acronym}`)
+            navigate("/appPage", { state: { App_Acronym: app.App_Acronym } })
+        }
         return (
             <TableRow>
                 <TableCell>{app.App_Acronym}</TableCell>
                 <TableCell>{app.App_startDate}</TableCell>
                 <TableCell>{app.App_endDate}</TableCell>
                 <TableCell align="right" style={{ display: "flex", alignItems: "center" }}>
-                    <ArrowIcon onClick={enterApp} />
+                    <ArrowIcon onClick={e => enterApp(app)} />
                     <ViewApp app={app} />
                     {/* <Button variant="contained" color="primary" style={{ marginRight: "25px" }}>
                         Edit

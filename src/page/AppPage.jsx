@@ -1,9 +1,19 @@
-import React from "react"
+import React, { useState } from "react"
+import { useParams, useLocation } from "react-router-dom"
 import Topbar from "../component/topbar.jsx"
 import Sidebarr from "../component/sidebar.jsx"
 import { Container, Box, Typography, Button } from "@mui/material"
 import KanbanBoard from "../component/KanbanBoard.jsx"
 const AppPage = () => {
+    const location = useLocation()
+    console.log("location", location)
+    const App_Acronym = location.state?.App_Acronym
+    // const { app } = useParams()
+    const [currentApp, setCurrentApp] = useState(App_Acronym)
+    console.log("cuurentApp", currentApp)
+
+    // get all task
+
     return (
         <Container maxWidth="xl" disableGutters>
             <Box display="flex" height="100vh">
@@ -14,17 +24,17 @@ const AppPage = () => {
                     <Topbar />
                     <Box display="flex" alignItems="center" style={{ margin: "20px 15px" }}>
                         <Typography variant="h4" component="div" style={{ flexGrow: 1 }}>
-                            KanBan Board
+                            {currentApp}
                         </Typography>
                         <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                             <Button variant="outlined" sx={{ marginRight: 1 }}>
                                 Create Tasks
                             </Button>
-                            <Button variant="outlined">Edit Plans</Button>
+                            <Button variant="outlined">Plans</Button>
                         </Box>
                     </Box>
 
-                    <KanbanBoard />
+                    <KanbanBoard currentApp={currentApp} />
                 </Box>
             </Box>
         </Container>
