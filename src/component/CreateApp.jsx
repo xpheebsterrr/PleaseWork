@@ -56,7 +56,6 @@ const CreateApp = () => {
         }
         getGroupOptions()
     }, [])
-    console.log("groupOptions", groupOptions)
 
     //Form overlay operations
     const handleClickOpen = () => {
@@ -83,13 +82,11 @@ const CreateApp = () => {
             [name]: value
         })
     }
-    console.log("appData", appData)
     const handleDropdownChange = (key, value) => {
         setAppData({
             ...appData,
             [key]: value
         })
-        console.log("appDataDropDown", appData)
     }
 
     const handleSubmit = async event => {

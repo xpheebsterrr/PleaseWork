@@ -4,7 +4,8 @@ import { toast } from "react-toastify"
 
 const API_URL = "http://localhost:3000/api/v1" // Replace with your API URL
 
-//get all Users from database
+//App Management
+//get all Apps from database
 const getAllApps = async () => {
     try {
         const appData = {
@@ -55,11 +56,15 @@ const createApp = async (
         App_permit_Done
     }
     try {
-        console.log("asds", appData)
+        console.log("appData", appData)
         const response = await axios.post(`${API_URL}/createApp`, appData)
         const message = response.data.message
         if (message === "Error: User is not authorised.") {
             toast.error("Error: User is not authorised.")
+        }
+        // Show error message
+        if (error.message === "Request failed with status code 500") {
+            toast.error("App exists")
         }
         // Show a toast with the dynamic message
         else toast.success(`${message}`)
@@ -73,7 +78,7 @@ const createApp = async (
     }
 }
 
-//create app
+//update app
 const updateApp = async (
     App_Acronym,
     App_startDate,
@@ -114,7 +119,9 @@ const updateApp = async (
         throw error
     }
 }
-//get User from database
+
+//tasks management
+//get tasks from database
 const getUser = async () => {
     try {
         const appData = {
@@ -128,32 +135,65 @@ const getUser = async () => {
     }
 }
 
-//createGroup
-const createGroup = async groupname => {
-    const groupData = { access_token: Cookies.get("token"), groupname }
+//Plan Management
+//createPlan
+const createPlan = async (Plan_app_Acronym, Plan_MVP_name, Plan_startDate, Plan_endDate) => {
+    const planData = {
+        access_token: Cookies.get("token"),
+        Plan_app_Acronym,
+        Plan_MVP_name,
+        Plan_startDate,
+        Plan_endDate
+    }
     try {
-        const response = await axios.post(`${API_URL}/createGroup`, groupData)
-        toast.success("Group created successfully")
+        const response = await axios.post(`${API_URL}/createPlan`, planData)
+        toast.success("Plan created successfully")
         return response.data
     } catch (error) {
-        console.error("Error creating group:", error)
-        // Show error message
-        if (error.message === "Request failed with status code 500") {
-            toast.error("group exists")
-        }
+        const errorMessage = error.response?.data?.message || "Plan already exists in this app"
+        toast.error(errorMessage)
+        // console.error("Error creating group:", error)
+        // toast.error("Plan already exists in this app")
         throw error
     }
 }
 
 //get all Groups from database
-const getAllGroups = async () => {
+const getAllPlans = async Plan_app_Acronym => {
     try {
-        const appData = { access_token: Cookies.get("token") }
-        const response = await axios.post(`${API_URL}/getGroup`, appData)
+        const planData = { access_token: Cookies.get("token"), Plan_app_Acronym }
+        const response = await axios.post(`${API_URL}/getPlans`, planData)
         return response.data
     } catch (error) {
-        console.error("Error fetching users:", error)
+        console.error("Error fetching plans:", error)
         throw error // Propagate error for handling in the calling component
+    }
+}
+
+//update plan
+const updatePlan = async (Plan_MVP_name, Plan_startDate, Plan_endDate, Plan_app_Acronym) => {
+    const planData = {
+        access_token: Cookies.get("token"),
+        Plan_MVP_name,
+        Plan_startDate,
+        Plan_endDate,
+        Plan_app_Acronym
+    }
+    try {
+        const response = await axios.put(`${API_URL}/updatePlan`, planData)
+        const message = response.data.message
+        if (message === "Error: User is not authorised.") {
+            toast.error("Error: User is not authorised.")
+        }
+        // Show a toast with the dynamic message
+        else toast.success(`${message}`)
+        return response.data
+    } catch (error) {
+        console.error("Error updating Plan:", error)
+        const errorMessage = error.response?.data?.message || "Failed to update Plan. Please try again."
+        // Show an error toast with the dynamic error message
+        toast.error(errorMessage)
+        throw error
     }
 }
 
@@ -173,8 +213,9 @@ export default {
     getAllApps,
     createApp,
     updateApp,
-    createGroup,
+    createPlan,
+    getAllPlans,
+    updatePlan,
     checkGroup,
-    getAllGroups,
     getUser
 }

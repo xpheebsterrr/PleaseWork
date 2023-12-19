@@ -36,7 +36,6 @@ const AppTable = () => {
     const AppRow = ({ app }) => {
         const navigate = useNavigate()
         const enterApp = app => {
-            console.log("app is: ", app)
             // navigate(`/appPage/${app.App_Acronym}`)
             navigate("/appPage", { state: { App_Acronym: app.App_Acronym } })
         }

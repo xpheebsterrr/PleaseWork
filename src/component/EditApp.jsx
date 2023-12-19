@@ -46,7 +46,6 @@ const EditApp = ({ app }) => {
         }
         getGroupOptions()
     }, [])
-    console.log("groupOptions", groupOptions)
 
     //Form overlay operations
     const handleClickOpen = () => {
@@ -122,7 +121,6 @@ const EditApp = ({ app }) => {
             ...newAppData,
             [key]: value
         })
-        console.log("appDataDropDown", appData)
     }
 
     return (

@@ -109,8 +109,6 @@ const AdminTable = () => {
         // Handle toggling of activated/disabled status of user
         const toggleStatus = async () => {
             try {
-                console.log("username", newUserData.username)
-                console.log("isActive", newUserData.isActive)
                 let result = await axios
                     .put("http://localhost:3000/api/v1/users/:username/toggle-status", {
                         access_token: Cookies.get("token"),

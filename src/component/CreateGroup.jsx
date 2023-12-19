@@ -20,7 +20,6 @@ const CreateGroup = () => {
 
     const handleSubmit = async event => {
         event.preventDefault()
-        console.log("creating new group")
         let result = await userServices.createGroup(groupname.groupname).catch(e => {
             if (e.response.status === 401) {
                 Cookies.remove("jwt-token")
@@ -41,7 +40,6 @@ const CreateGroup = () => {
                 setGroupname({})
             }
         } catch (e) {
-            // console.log("result.data.message", result.data.message)
             toast.error(e, {
                 autoClose: false
             })
