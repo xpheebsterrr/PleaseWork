@@ -235,6 +235,32 @@ const getTasks = async (Task_state, Task_app_Acronym) => {
     }
 }
 
+//Edit Task
+const editTask = async (Task_plan, Task_notes, Task_id) => {
+    const taskData = {
+        access_token: Cookies.get("token"),
+        Task_plan,
+        Task_notes,
+        Task_id
+    }
+    try {
+        const response = await axios.post(`${API_URL}/editTask`, taskData)
+        const message = response.data.message
+        if (message === "Error: User is not authorised.") {
+            toast.error("Error: User is not authorised.")
+        }
+        // Show a toast with the dynamic message
+        else toast.success(`${message}`)
+        return response.data
+    } catch (error) {
+        console.error("Error editing task:", error)
+        const errorMessage = error.response?.data?.message || "Failed to edit task. Please try again."
+        // Show an error toast with the dynamic error message
+        toast.error(errorMessage)
+        throw error
+    }
+}
+
 //CheckGroup
 const checkGroup = async groupnames => {
     const groupData = { access_token: Cookies.get("token"), groupnames }
@@ -257,5 +283,6 @@ export default {
     updatePlan,
     createTask,
     getTasks,
+    editTask,
     checkGroup
 }

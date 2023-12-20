@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import { Box, Paper, Grid, Typography, Button, Card, CardContent } from "@mui/material"
 import appService from "../services/appService.jsx"
 import TaskModal from "./TaskModal.jsx"
+import { motion } from "framer-motion"
 
 const pastelColors = {
     open: "#F3E5AB", // pastel yellow
@@ -17,23 +18,31 @@ const KanbanColumn = ({ title, tasks, onTaskClick }) => {
                 {title}
             </Typography>
             {tasks.map((task, index) => (
-                <Card
+                <motion.div
                     key={index}
-                    sx={{ marginBottom: 1, backgroundColor: pastelColors[task.Task_state.toLowerCase()] }}
-                    onClick={() => onTaskClick(task)}
+                    initial={{ scale: 1 }}
+                    whileHover={{ scale: 1.03 }} // Scale up on hover
+                    whileTap={{ scale: 0.97 }} // Scale down slightly on click
+                    transition={{ type: "spring", stiffness: 300 }}
+                    style={{ cursor: "pointer" }} // Change cursor to pointer on hover
                 >
-                    <CardContent>
-                        <Typography variant="body2">
-                            <strong>ID:</strong> {task.Task_id}
-                        </Typography>
-                        <Typography variant="body2">
-                            <strong>Name:</strong> {task.Task_name}
-                        </Typography>
-                        <Typography variant="body2">
-                            <strong>Owner:</strong> {task.Task_owner}
-                        </Typography>
-                    </CardContent>
-                </Card>
+                    <Card
+                        sx={{ marginBottom: 1, backgroundColor: pastelColors[task.Task_state.toLowerCase()] }}
+                        onClick={() => onTaskClick(task)}
+                    >
+                        <CardContent>
+                            <Typography variant="body2">
+                                <strong>ID:</strong> {task.Task_id}
+                            </Typography>
+                            <Typography variant="body2">
+                                <strong>Name:</strong> {task.Task_name}
+                            </Typography>
+                            <Typography variant="body2">
+                                <strong>Owner:</strong> {task.Task_owner}
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </motion.div>
             ))}
         </Paper>
     )
