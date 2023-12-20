@@ -120,17 +120,17 @@ const updateApp = async (
     }
 }
 
-//tasks management
-//get tasks from database
-const getUser = async () => {
+//get app from database
+const getApp = async App_Acronym => {
     try {
         const appData = {
-            access_token: Cookies.get("token")
+            access_token: Cookies.get("token"),
+            App_Acronym
         }
-        const response = await axios.post(`${API_URL}/getUser`, appData)
+        const response = await axios.post(`${API_URL}/getApp`, appData)
         return response.data
     } catch (error) {
-        console.error("Error fetching user:", error)
+        console.error("Error fetching App:", error)
         throw error // Propagate error for handling in the calling component
     }
 }
@@ -197,6 +197,44 @@ const updatePlan = async (Plan_MVP_name, Plan_startDate, Plan_endDate, Plan_app_
     }
 }
 
+//Task Management
+//createTask
+const createTask = async (Task_name, Task_description, Task_id, Task_app_Acronym) => {
+    const taskData = {
+        access_token: Cookies.get("token"),
+        Task_name,
+        Task_description,
+        Task_id,
+        Task_app_Acronym
+    }
+    try {
+        const response = await axios.post(`${API_URL}/createTask`, taskData)
+        toast.success("Task created successfully")
+        return response.data
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || "Task already exist in app"
+        toast.error(errorMessage)
+        // console.error("Error creating group:", error)
+        // toast.error("Plan already exists in this app")
+        throw error
+    }
+}
+//Get Tasks in each state
+const getTasks = async (Task_state, Task_app_Acronym) => {
+    try {
+        const taskData = {
+            access_token: Cookies.get("token"),
+            Task_state,
+            Task_app_Acronym
+        }
+        const response = await axios.post(`${API_URL}/getTasks`, taskData)
+        return response.data
+    } catch (error) {
+        console.error("Error fetching Tasks:", error)
+        throw error // Propagate error for handling in the calling component
+    }
+}
+
 //CheckGroup
 const checkGroup = async groupnames => {
     const groupData = { access_token: Cookies.get("token"), groupnames }
@@ -213,9 +251,11 @@ export default {
     getAllApps,
     createApp,
     updateApp,
+    getApp,
     createPlan,
     getAllPlans,
     updatePlan,
-    checkGroup,
-    getUser
+    createTask,
+    getTasks,
+    checkGroup
 }

@@ -4,6 +4,7 @@ import Topbar from "../component/topbar.jsx"
 import Sidebarr from "../component/sidebar.jsx"
 import { Container, Box, Typography, Button } from "@mui/material"
 import KanbanBoard from "../component/KanbanBoard.jsx"
+import CreateTask from "../component/CreateTask.jsx"
 const AppPage = () => {
     const navigate = useNavigate()
     const location = useLocation()
@@ -34,9 +35,10 @@ const AppPage = () => {
                             {currentApp}
                         </Typography>
                         <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                            <Button variant="outlined" sx={{ marginRight: 1 }}>
+                            {/* <Button variant="outlined" sx={{ marginRight: 1 }}>
                                 Create Tasks
-                            </Button>
+                            </Button> */}
+                            <CreateTask currentApp={currentApp} />
                             <Button variant="outlined" onClick={e => enterPlan(currentApp)}>
                                 Plans{" "}
                             </Button>
