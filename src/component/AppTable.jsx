@@ -1,27 +1,15 @@
-import React, { useState, useEffect } from "react"
-import { Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material"
-import appService from "../services/appService.jsx"
+import React from "react"
 import { useNavigate } from "react-router-dom"
-import ViewApp from "./ViewApp.jsx"
-import EditApp from "./EditApp.jsx"
-import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined"
+
 import styled from "@emotion/styled"
+import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined"
+import { Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material"
 
-const AppTable = () => {
-    const [apps, setApps] = useState([]) //store all apps
-    //fetch all users on table
-    useEffect(() => {
-        const fetchApps = async () => {
-            try {
-                const data = await appService.getAllApps()
-                setApps(data.data) //response is an array of users
-            } catch (error) {
-                console.error("Error fetching apps:", error)
-            }
-        } // fetch users from database
-        fetchApps()
-    }, [])
+import EditApp from "./EditApp.jsx"
+import ViewApp from "./ViewApp.jsx"
 
+
+const AppTable = ({apps}) => {
     // Styled icon with animation
     const ArrowIcon = styled(ArrowForwardOutlinedIcon)`
         margin-left: 25px;

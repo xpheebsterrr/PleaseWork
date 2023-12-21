@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react"
+
+import CloseIcon from "@mui/icons-material/Close"
 import {
     Dialog,
     DialogTitle,
@@ -15,10 +17,11 @@ import {
     InputLabel,
     MenuItem
 } from "@mui/material"
-import CloseIcon from "@mui/icons-material/Close"
+
 import appService from "../services/appService.jsx"
 
-const TaskModal = ({ task, open, handleClose, handleTaskUpdate }) => {
+
+const TaskModal = ({ task, open, handleClose, fetchTasks }) => {
     if (!task) return null
     const [taskData, setTaskData] = useState({ ...task, Task_notes: "" }) // Initialize taskData with task
     const [planOptions, setPlanOptions] = useState([])
@@ -77,7 +80,7 @@ const TaskModal = ({ task, open, handleClose, handleTaskUpdate }) => {
                 task.Task_name
             )
             // If successful, update the task in the parent component
-            handleTaskUpdate(updatedTask.data)
+            fetchTasks()
         } catch (error) {
             console.error("Unexpected error in handleSubmit", error)
         }
@@ -95,7 +98,7 @@ const TaskModal = ({ task, open, handleClose, handleTaskUpdate }) => {
                 task.Task_app_Acronym
             )
             // If successful, update the task in the parent component
-            handleTaskUpdate(updatedTask.data)
+            fetchTasks(updatedTask.data)
         } catch (error) {
             console.error("Unexpected error in handleSubmit", error)
         }

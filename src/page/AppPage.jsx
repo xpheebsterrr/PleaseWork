@@ -1,10 +1,15 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
-import Topbar from "../component/topbar.jsx"
-import Sidebarr from "../component/sidebar.jsx"
+
 import { Container, Box, Typography, Button } from "@mui/material"
-import KanbanBoard from "../component/KanbanBoard.jsx"
+
 import CreateTask from "../component/CreateTask.jsx"
+import KanbanBoard from "../component/KanbanBoard.jsx"
+import appService from "../services/appService.jsx"
+import Sidebarr from "../component/sidebar.jsx"
+import Topbar from "../component/topbar.jsx"
+
+
 const AppPage = () => {
     const navigate = useNavigate()
     const location = useLocation()
@@ -19,8 +24,21 @@ const AppPage = () => {
         // navigate(`/appPage/${app.App_Acronym}`)
         navigate("/plans", { state: { currentApp: currentApp } })
     }
+    const [allTasks, setAllTasks] = useState([])
 
     // get all task
+    const fetchTasks = async () => {
+        try {
+            const allTasks = await appService.getTasks("all", currentApp)
+            setAllTasks(allTasks?.data ?? [])
+        } catch (error) {
+            console.error("Error fetching Tasks:", error)
+        }
+    }
+
+    useEffect(() => {
+        fetchTasks()
+    }, [currentApp])
 
     return (
         <Container maxWidth="xl" disableGutters>
@@ -38,14 +56,14 @@ const AppPage = () => {
                             {/* <Button variant="outlined" sx={{ marginRight: 1 }}>
                                 Create Tasks
                             </Button> */}
-                            <CreateTask currentApp={currentApp} />
+                            <CreateTask currentApp={currentApp} fetchTasks={fetchTasks} />
                             <Button variant="outlined" onClick={e => enterPlan(currentApp)}>
                                 Plans{" "}
                             </Button>
                         </Box>
                     </Box>
 
-                    <KanbanBoard currentApp={currentApp} />
+                    <KanbanBoard currentApp={currentApp} allTasks={allTasks} fetchTasks={fetchTasks} />
                 </Box>
             </Box>
         </Container>
