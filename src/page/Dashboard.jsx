@@ -2,13 +2,27 @@ import React, { useState, useEffect } from "react"
 import Topbar from "../component/topbar.jsx"
 import Sidebarr from "../component/sidebar.jsx"
 import { Container, Box, Typography } from "@mui/material"
-import AdminTable from "../component/AdminTable.jsx"
 import AppTable from "../component/AppTable.jsx"
 import CreateApp from "../component/CreateApp.jsx"
 import appService from "../services/appService.jsx"
+import userServices from "../services/userServices.jsx"
 
 const Dashboard = () => {
     const [apps, setApps] = useState([]) //store all apps
+    const [isUserInPermittedGroup, setIsUserInPermittedGroup] = useState(false)
+    //Check if user is in permitted group
+    useEffect(() => {
+        const checkIfUserInGroup = async () => {
+            try {
+                const response = await userServices.checkGroup("Project Lead")
+                console.log("response.isUserInGroup", response.result)
+                setIsUserInPermittedGroup(response.result)
+            } catch (error) {
+                console.error("Error checking user group", error)
+            }
+        }
+        checkIfUserInGroup()
+    }, [])
 
     //fetch all users on table
     const fetchApps = async () => {
@@ -21,7 +35,7 @@ const Dashboard = () => {
     } // fetch users from database
 
     useEffect(() => {
-        console.log('test')
+        console.log("test")
         fetchApps()
     }, [])
 
@@ -37,9 +51,9 @@ const Dashboard = () => {
                         <Typography variant="h4" component="div" style={{ flexGrow: 1 }}>
                             Application List
                         </Typography>
-                        <CreateApp fetchApps={fetchApps} />
+                        {isUserInPermittedGroup && <CreateApp fetchApps={fetchApps} />}
                     </Box>
-                    <AppTable apps={apps} />
+                    <AppTable apps={apps} isUserInPermittedGroup={isUserInPermittedGroup} />
                 </Box>
             </Box>
         </Container>
