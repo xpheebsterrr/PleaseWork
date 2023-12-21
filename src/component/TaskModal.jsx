@@ -101,6 +101,24 @@ const TaskModal = ({ task, open, handleClose, handleTaskUpdate }) => {
         }
         handleClose()
     }
+    const handleDemote = async event => {
+        event.preventDefault()
+        try {
+            const updatedTask = await appService.demoteTask(
+                taskData.Task_plan,
+                taskData.Task_notes,
+                task.Task_id,
+                task.Task_state,
+                task.Task_name,
+                task.Task_app_Acronym
+            )
+            // If successful, update the task in the parent component
+            handleTaskUpdate(updatedTask.data)
+        } catch (error) {
+            console.error("Unexpected error in handleSubmit", error)
+        }
+        handleClose()
+    }
 
     return (
         <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
@@ -253,6 +271,9 @@ const TaskModal = ({ task, open, handleClose, handleTaskUpdate }) => {
                 {/* <Button onClick={handleClose} color="primary">
                     Cancel
                 </Button> */}
+                <Button onClick={handleDemote} color="primary">
+                    Demote and Save
+                </Button>
                 <Button onClick={handlePromote} color="primary">
                     Promote and Save
                 </Button>

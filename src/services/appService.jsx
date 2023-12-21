@@ -292,6 +292,35 @@ const promoteTask = async (Task_plan, Task_notes, Task_id, Task_state, Task_name
     }
 }
 
+//Promote Task
+const demoteTask = async (Task_plan, Task_notes, Task_id, Task_state, Task_name, Task_app_Acronym) => {
+    const taskData = {
+        access_token: Cookies.get("token"),
+        Task_plan,
+        Task_notes,
+        Task_id,
+        Task_state,
+        Task_name,
+        Task_app_Acronym
+    }
+    try {
+        const response = await axios.post(`${API_URL}/demoteTask`, taskData)
+        const message = response.data.message
+        if (message === "Error: User is not authorised.") {
+            toast.error("Error: User is not authorised.")
+        }
+        // Show a toast with the dynamic message
+        else toast.success(`${message}`)
+        return response.data
+    } catch (error) {
+        console.error("Error promoting task:", error)
+        const errorMessage = error.response?.data?.message || "Failed to demote task. Please try again."
+        // Show an error toast with the dynamic error message
+        toast.error(errorMessage)
+        throw error
+    }
+}
+
 //CheckGroup
 const checkGroup = async groupnames => {
     const groupData = { access_token: Cookies.get("token"), groupnames }
@@ -316,5 +345,6 @@ export default {
     getTasks,
     editTask,
     promoteTask,
+    demoteTask,
     checkGroup
 }
