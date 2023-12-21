@@ -18,6 +18,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close"
 import appService from "../services/appService.jsx"
 import userServices from "../services/userServices.jsx"
+import { toast } from "react-toastify"
 
 const TaskModal = ({ task, open, handleClose, handleTaskUpdate }) => {
     if (!task) return null
@@ -313,11 +314,7 @@ const TaskModal = ({ task, open, handleClose, handleTaskUpdate }) => {
                 {/* <Button onClick={handleClose} color="primary">
                     Cancel
                 </Button> */}
-                <Button
-                    onClick={handleDemote}
-                    color="primary"
-                    disabled={!(task.Task_state === "doing" && isUserInPermittedGroup)}
-                >
+                <Button onClick={handleDemote} color="primary" disabled={!(task.Task_state === "done" && isUserInPermittedGroup)}>
                     Demote and Save
                 </Button>
                 <Button onClick={handlePromote} color="primary" disabled={task.Task_state === "close" || !isUserInPermittedGroup}>
