@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react"
-import { Box, Paper, Grid, Typography, Button, Card, CardContent } from "@mui/material"
-import appService from "../services/appService.jsx"
-import TaskModal from "./TaskModal.jsx"
+import React, { useState } from "react"
 import { motion } from "framer-motion"
+
+import { Box, Paper, Grid, Typography, Card, CardContent } from "@mui/material"
+
+import TaskModal from "./TaskModal.jsx"
+
 
 const pastelColors = {
     open: "#F3E5AB", // pastel yellow
@@ -12,6 +14,7 @@ const pastelColors = {
     closed: "#F3ABE5", // pastel pink
     default: "#FFFFFF"
 }
+
 const KanbanColumn = ({ title, tasks, onTaskClick }) => {
     return (
         <Paper sx={{ margin: 2, width: 200, flexGrow: 1 }}>
@@ -49,12 +52,19 @@ const KanbanColumn = ({ title, tasks, onTaskClick }) => {
     )
 }
 
-const KanbanBoard = ({ currentApp }) => {
-    const [openTasks, setOpenTasks] = useState([])
-    const [todoTasks, setTodoTasks] = useState([])
-    const [doingTasks, setDoingTasks] = useState([])
-    const [doneTasks, setDoneTasks] = useState([])
-    const [closedTasks, setClosedTasks] = useState([])
+const KanbanBoard = ({ currentApp, allTasks, fetchTasks }) => {
+    const STATE_OPEN = "open"
+    const STATE_TODO = "todo"
+    const STATE_DOING = "doing"
+    const STATE_DONE = "done"
+    const STATE_CLOSED = "closed"
+
+    const openTasks = allTasks.filter(task => task.Task_state === STATE_OPEN)
+    const todoTasks = allTasks.filter(task => task.Task_state === STATE_TODO)
+    const doingTasks = allTasks.filter(task => task.Task_state === STATE_DOING)
+    const doneTasks = allTasks.filter(task => task.Task_state === STATE_DONE)
+    const closedTasks = allTasks.filter(task => task.Task_state === STATE_CLOSED)
+
     const [selectedTask, setSelectedTask] = useState(null)
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
 
@@ -67,52 +77,6 @@ const KanbanBoard = ({ currentApp }) => {
         setIsTaskModalOpen(false)
         setSelectedTask(null) // Clear the selected task on modal close
     }
-
-    // This function will be called by TaskModal when a task is updated.
-    const handleTaskUpdate = updatedTaskData => {
-        console.log("Task update is called with:", updatedTaskData)
-
-        // A helper function to update a task in a tasks array
-        const updateTaskInArray = (tasksArray, updatedTask) => {
-            console.log("task array", updatedTask)
-            return tasksArray.map(task => {
-                if (task.Task_id === updatedTask.Task_id) {
-                    // Merge the existing task properties with the updated properties
-                    return { ...task, ...updatedTask }
-                }
-                return task
-            })
-        }
-
-        // Update the tasks in each state array
-        setOpenTasks(currentTasks => updateTaskInArray(currentTasks, updatedTaskData))
-        setTodoTasks(currentTasks => updateTaskInArray(currentTasks, updatedTaskData))
-        setDoingTasks(currentTasks => updateTaskInArray(currentTasks, updatedTaskData))
-        setDoneTasks(currentTasks => updateTaskInArray(currentTasks, updatedTaskData))
-        setClosedTasks(currentTasks => updateTaskInArray(currentTasks, updatedTaskData))
-    }
-
-    useEffect(() => {
-        const fetchTasks = async () => {
-            try {
-                // Assuming appService.getTasks fetches tasks based on their state
-                const open = await appService.getTasks("open", currentApp)
-                const todo = await appService.getTasks("todo", currentApp)
-                const doing = await appService.getTasks("doing", currentApp)
-                const done = await appService.getTasks("done", currentApp)
-                const closed = await appService.getTasks("closed", currentApp)
-                console.log("Fetched open tasks:", open.data)
-                setOpenTasks(open.data)
-                setTodoTasks(todo.data)
-                setDoingTasks(doing.data)
-                setDoneTasks(done.data)
-                setClosedTasks(closed.data)
-            } catch (error) {
-                console.error("Error fetching Tasks:", error)
-            }
-        } // fetch Tasks from database
-        fetchTasks()
-    }, [currentApp])
 
     return (
         <Box sx={{ flexGrow: 1, overflow: "auto" }}>
@@ -137,7 +101,7 @@ const KanbanBoard = ({ currentApp }) => {
                 task={selectedTask}
                 open={isTaskModalOpen}
                 handleClose={handleCloseModal}
-                handleTaskUpdate={handleTaskUpdate}
+                fetchTasks={fetchTasks}
             />
         </Box>
     )

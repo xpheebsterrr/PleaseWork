@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react"
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, IconButton } from "@mui/material"
+import React, { useState } from "react"
+
 import CloseIcon from "@mui/icons-material/Close"
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, IconButton } from "@mui/material"
+
 import appService from "../services/appService.jsx"
 
-const CreateTask = ({ currentApp }) => {
+
+const CreateTask = ({ currentApp, fetchTasks }) => {
     console.log("currentApp", currentApp)
     const [modalOpen, setModalOpen] = useState(false)
     const [taskData, setTaskData] = useState({
@@ -47,6 +50,7 @@ const CreateTask = ({ currentApp }) => {
             console.error("error in handleSubmit", error)
         }
         setModalOpen(false) // Close the modal
+        fetchTasks();
     }
 
     return (

@@ -18,7 +18,8 @@ import userServices from "../services/userServices.jsx"
 import { toast } from "react-toastify"
 import appService from "../services/appService.jsx"
 
-const CreateApp = () => {
+const CreateApp = ({fetchApps}) => {
+    console.log('createapp', fetchApps)
     const [open, setOpen] = useState(false)
     const [appData, setAppData] = useState({
         App_Acronym: "",
@@ -107,7 +108,9 @@ const CreateApp = () => {
         } catch (error) {
             console.error("Unexpected error in handleSubmit", error)
         }
+        console.log('created app?')
         setOpen(false)
+        fetchApps()
     }
 
     return (
