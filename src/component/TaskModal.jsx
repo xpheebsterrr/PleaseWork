@@ -17,11 +17,15 @@ import {
 } from "@mui/material"
 import CloseIcon from "@mui/icons-material/Close"
 import appService from "../services/appService.jsx"
+import userServices from "../services/userServices.jsx"
 
 const TaskModal = ({ task, open, handleClose, handleTaskUpdate }) => {
     if (!task) return null
     const [taskData, setTaskData] = useState({ ...task, Task_notes: "" }) // Initialize taskData with task
     const [planOptions, setPlanOptions] = useState([])
+    const [statePermit, setStatePermit] = useState("")
+    const [isUserInPermittedGroup, setIsUserInPermittedGroup] = useState(false)
+
     //Get Plan options, in an array of objects
     useEffect(() => {
         const getPlanOptions = async () => {
@@ -48,10 +52,45 @@ const TaskModal = ({ task, open, handleClose, handleTaskUpdate }) => {
         getPlanOptions()
     }, [task.Task_plan])
 
-    // const [taskData, setTaskData] = useState({
-    //     Task_notes: task.Task_notes,
-    //     Task_plan: task.Task_plan
-    // })
+    //Fetch app permits per state
+    useEffect(() => {
+        const getStatePermit = async () => {
+            try {
+                const result = await appService.getAppPermit(task.Task_app_Acronym, task.Task_state)
+                setStatePermit(result.data)
+            } catch (e) {
+                //Error handling: e is the error object
+                console.error("error getting state permit", e)
+                if (e.response && e.response.data) {
+                    //if there is response w error data
+                    toast.error(e.response.data.message)
+                } else {
+                    //error w no response eg. network error
+                    toast.error("An unexpected error occured")
+                }
+            }
+        }
+        getStatePermit()
+    }, [task.Task_state])
+    console.log("State permit", statePermit)
+
+    //Check if user is in permitted group
+    useEffect(() => {
+        const checkIfUserInGroup = async () => {
+            try {
+                const response = await userServices.checkGroup(statePermit)
+                console.log("response.isUserInGroup", response.result)
+                setIsUserInPermittedGroup(response.result)
+            } catch (error) {
+                console.error("Error checking user group", error)
+            }
+        }
+
+        if (statePermit) {
+            checkIfUserInGroup()
+        }
+    }, [statePermit])
+
     const handleChange = event => {
         const { name, value } = event.target
         setTaskData({
@@ -241,8 +280,11 @@ const TaskModal = ({ task, open, handleClose, handleTaskUpdate }) => {
                                         label="Plan"
                                         name="Task_plan"
                                         value={taskData.Task_plan || ""}
-                                        // This can be made editable based on requirements
                                         onChange={e => handleDropdownChange(e.target.name, e.target.value)}
+                                        disabled={
+                                            !(task.Task_state === "open" && isUserInPermittedGroup) &&
+                                            !(task.Task_state === "done" && isUserInPermittedGroup)
+                                        }
                                     >
                                         {planOptions.map(option => (
                                             <MenuItem key={option} value={option}>
@@ -271,10 +313,14 @@ const TaskModal = ({ task, open, handleClose, handleTaskUpdate }) => {
                 {/* <Button onClick={handleClose} color="primary">
                     Cancel
                 </Button> */}
-                <Button onClick={handleDemote} color="primary">
+                <Button
+                    onClick={handleDemote}
+                    color="primary"
+                    disabled={!(task.Task_state === "doing" && isUserInPermittedGroup)}
+                >
                     Demote and Save
                 </Button>
-                <Button onClick={handlePromote} color="primary">
+                <Button onClick={handlePromote} color="primary" disabled={task.Task_state === "close" || !isUserInPermittedGroup}>
                     Promote and Save
                 </Button>
                 <Button onClick={handleSubmit} color="primary">

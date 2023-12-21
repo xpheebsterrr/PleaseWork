@@ -112,7 +112,7 @@ const getAllGroups = async () => {
         const response = await axios.post(`${API_URL}/getGroup`, userData)
         return response.data
     } catch (error) {
-        console.error("Error fetching users:", error)
+        console.error("Error fetching groups:", error)
         throw error // Propagate error for handling in the calling component
     }
 }

@@ -135,6 +135,22 @@ const getApp = async App_Acronym => {
     }
 }
 
+//get app permit from database
+const getAppPermit = async (Task_app_Acronym, Task_state) => {
+    try {
+        const appData = {
+            access_token: Cookies.get("token"),
+            Task_app_Acronym,
+            Task_state
+        }
+        const response = await axios.post(`${API_URL}/getAppPermit`, appData)
+        return response.data
+    } catch (error) {
+        console.error("Error fetching App:", error)
+        throw error // Propagate error for handling in the calling component
+    }
+}
+
 //Plan Management
 //createPlan
 const createPlan = async (Plan_app_Acronym, Plan_MVP_name, Plan_startDate, Plan_endDate) => {
@@ -338,6 +354,7 @@ export default {
     createApp,
     updateApp,
     getApp,
+    getAppPermit,
     createPlan,
     getAllPlans,
     updatePlan,
