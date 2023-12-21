@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
-
 import { Container, Box, Typography, Button } from "@mui/material"
-
 import CreateTask from "../component/CreateTask.jsx"
 import KanbanBoard from "../component/KanbanBoard.jsx"
 import appService from "../services/appService.jsx"
 import Sidebarr from "../component/sidebar.jsx"
 import Topbar from "../component/topbar.jsx"
-
 
 const AppPage = () => {
     const navigate = useNavigate()
@@ -24,6 +21,20 @@ const AppPage = () => {
         // navigate(`/appPage/${app.App_Acronym}`)
         navigate("/plans", { state: { currentApp: currentApp } })
     }
+    const [isUserInPermittedGroup, setIsUserInPermittedGroup] = useState(false)
+    //Check if user is in permitted group
+    useEffect(() => {
+        const checkIfUserInGroup = async () => {
+            try {
+                const response = await userServices.checkGroup("Project Lead")
+                console.log("response.isUserInGroup", response.result)
+                setIsUserInPermittedGroup(response.result)
+            } catch (error) {
+                console.error("Error checking user group", error)
+            }
+        }
+        checkIfUserInGroup()
+    }, [currentApp])
     const [allTasks, setAllTasks] = useState([])
 
     // get all task
@@ -56,7 +67,7 @@ const AppPage = () => {
                             {/* <Button variant="outlined" sx={{ marginRight: 1 }}>
                                 Create Tasks
                             </Button> */}
-                            <CreateTask currentApp={currentApp} fetchTasks={fetchTasks} />
+                            {isUserInPermittedGroup && <CreateTask currentApp={currentApp} fetchTasks={fetchTasks} />}
                             <Button variant="outlined" onClick={e => enterPlan(currentApp)}>
                                 Plans{" "}
                             </Button>
