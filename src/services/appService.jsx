@@ -236,12 +236,14 @@ const getTasks = async (Task_state, Task_app_Acronym) => {
 }
 
 //Edit Task
-const editTask = async (Task_plan, Task_notes, Task_id) => {
+const editTask = async (Task_plan, Task_notes, Task_id, Task_state, Task_name) => {
     const taskData = {
         access_token: Cookies.get("token"),
         Task_plan,
         Task_notes,
-        Task_id
+        Task_id,
+        Task_state,
+        Task_name
     }
     try {
         const response = await axios.post(`${API_URL}/editTask`, taskData)
@@ -255,6 +257,35 @@ const editTask = async (Task_plan, Task_notes, Task_id) => {
     } catch (error) {
         console.error("Error editing task:", error)
         const errorMessage = error.response?.data?.message || "Failed to edit task. Please try again."
+        // Show an error toast with the dynamic error message
+        toast.error(errorMessage)
+        throw error
+    }
+}
+
+//Promote Task
+const promoteTask = async (Task_plan, Task_notes, Task_id, Task_state, Task_name, Task_app_Acronym) => {
+    const taskData = {
+        access_token: Cookies.get("token"),
+        Task_plan,
+        Task_notes,
+        Task_id,
+        Task_state,
+        Task_name,
+        Task_app_Acronym
+    }
+    try {
+        const response = await axios.post(`${API_URL}/promoteTask`, taskData)
+        const message = response.data.message
+        if (message === "Error: User is not authorised.") {
+            toast.error("Error: User is not authorised.")
+        }
+        // Show a toast with the dynamic message
+        else toast.success(`${message}`)
+        return response.data
+    } catch (error) {
+        console.error("Error promoting task:", error)
+        const errorMessage = error.response?.data?.message || "Failed to promote task. Please try again."
         // Show an error toast with the dynamic error message
         toast.error(errorMessage)
         throw error
@@ -284,5 +315,6 @@ export default {
     createTask,
     getTasks,
     editTask,
+    promoteTask,
     checkGroup
 }

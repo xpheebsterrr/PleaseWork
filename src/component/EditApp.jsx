@@ -149,7 +149,9 @@ const EditApp = ({ app }) => {
                                 fullWidth
                                 style={{ marginBottom: "16px" }}
                                 value={newAppData.App_Acronym}
-                                disabled
+                                InputProps={{
+                                    readOnly: true
+                                }}
                             />
                             <TextField
                                 margin="dense"
@@ -158,7 +160,9 @@ const EditApp = ({ app }) => {
                                 type="number"
                                 fullWidth
                                 value={newAppData.App_Rnumber}
-                                disabled
+                                InputProps={{
+                                    readOnly: true
+                                }}
                             />
                             <Box display="flex" gap={2} mt={2} mb={2}>
                                 <TextField

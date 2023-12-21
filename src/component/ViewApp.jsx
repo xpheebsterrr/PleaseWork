@@ -98,15 +98,17 @@ const ViewApp = ({ app }) => {
                                 <strong>App Acronym:</strong> {app.App_Acronym}
                             </StyledTypography>
                             <TextField
-                                margin="dense"
+                                fullWidth
+                                margin="normal"
                                 name="App_Description"
                                 label="Description"
                                 type="text"
-                                // fullWidth
                                 multiline
                                 rows={4}
                                 defaultValue={app.App_Description}
-                                disabled
+                                InputProps={{
+                                    readOnly: true
+                                }}
                             />
                         </Grid>
                         {/* Right column content */}

@@ -9,7 +9,8 @@ const pastelColors = {
     todo: "#ABE5D1", // pastel green
     doing: "#ABD1E5", // pastel blue
     done: "#E5ABF3", // pastel purple
-    closed: "#F3ABE5" // pastel pink
+    closed: "#F3ABE5", // pastel pink
+    default: "#FFFFFF"
 }
 const KanbanColumn = ({ title, tasks, onTaskClick }) => {
     return (
@@ -27,7 +28,7 @@ const KanbanColumn = ({ title, tasks, onTaskClick }) => {
                     style={{ cursor: "pointer" }} // Change cursor to pointer on hover
                 >
                     <Card
-                        sx={{ marginBottom: 1, backgroundColor: pastelColors[task.Task_state.toLowerCase()] }}
+                        sx={{ marginBottom: 1, backgroundColor: pastelColors[task.Task_state?.toLowerCase() || "default"] }}
                         onClick={() => onTaskClick(task)}
                     >
                         <CardContent>
@@ -65,6 +66,30 @@ const KanbanBoard = ({ currentApp }) => {
     const handleCloseModal = () => {
         setIsTaskModalOpen(false)
         setSelectedTask(null) // Clear the selected task on modal close
+    }
+
+    // This function will be called by TaskModal when a task is updated.
+    const handleTaskUpdate = updatedTaskData => {
+        console.log("Task update is called with:", updatedTaskData)
+
+        // A helper function to update a task in a tasks array
+        const updateTaskInArray = (tasksArray, updatedTask) => {
+            console.log("task array", updatedTask)
+            return tasksArray.map(task => {
+                if (task.Task_id === updatedTask.Task_id) {
+                    // Merge the existing task properties with the updated properties
+                    return { ...task, ...updatedTask }
+                }
+                return task
+            })
+        }
+
+        // Update the tasks in each state array
+        setOpenTasks(currentTasks => updateTaskInArray(currentTasks, updatedTaskData))
+        setTodoTasks(currentTasks => updateTaskInArray(currentTasks, updatedTaskData))
+        setDoingTasks(currentTasks => updateTaskInArray(currentTasks, updatedTaskData))
+        setDoneTasks(currentTasks => updateTaskInArray(currentTasks, updatedTaskData))
+        setClosedTasks(currentTasks => updateTaskInArray(currentTasks, updatedTaskData))
     }
 
     useEffect(() => {
@@ -108,7 +133,12 @@ const KanbanBoard = ({ currentApp }) => {
                     <KanbanColumn title="close" tasks={closedTasks} onTaskClick={handleTaskClick} />
                 </Grid>
             </Grid>
-            <TaskModal task={selectedTask} open={isTaskModalOpen} handleClose={handleCloseModal} />
+            <TaskModal
+                task={selectedTask}
+                open={isTaskModalOpen}
+                handleClose={handleCloseModal}
+                handleTaskUpdate={handleTaskUpdate}
+            />
         </Box>
     )
 }

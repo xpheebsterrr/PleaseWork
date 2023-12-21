@@ -18,9 +18,9 @@ import {
 import CloseIcon from "@mui/icons-material/Close"
 import appService from "../services/appService.jsx"
 
-const TaskModal = ({ task, open, handleClose }) => {
+const TaskModal = ({ task, open, handleClose, handleTaskUpdate }) => {
     if (!task) return null
-
+    const [taskData, setTaskData] = useState({ ...task, Task_notes: "" }) // Initialize taskData with task
     const [planOptions, setPlanOptions] = useState([])
     //Get Plan options, in an array of objects
     useEffect(() => {
@@ -28,6 +28,10 @@ const TaskModal = ({ task, open, handleClose }) => {
             try {
                 const result = await appService.getAllPlans(task.Task_app_Acronym)
                 setPlanOptions(result.data.map(a => a.Plan_MVP_name))
+                // Set taskData.Task_plan only if it matches an option
+                if (result.data.some(a => a.Plan_MVP_name === task.Task_plan)) {
+                    setTaskData(prev => ({ ...prev, Task_plan: task.Task_plan }))
+                }
                 console.log("plan options", result)
             } catch (e) {
                 //Error handling: e is the error object
@@ -42,12 +46,19 @@ const TaskModal = ({ task, open, handleClose }) => {
             }
         }
         getPlanOptions()
-    }, [])
+    }, [task.Task_plan])
 
-    const [taskData, setTaskData] = useState({
-        Task_notes: "",
-        Task_plan: ""
-    })
+    // const [taskData, setTaskData] = useState({
+    //     Task_notes: task.Task_notes,
+    //     Task_plan: task.Task_plan
+    // })
+    const handleChange = event => {
+        const { name, value } = event.target
+        setTaskData({
+            ...taskData,
+            [name]: value
+        })
+    }
     const handleDropdownChange = (key, value) => {
         setTaskData({
             ...taskData,
@@ -58,11 +69,37 @@ const TaskModal = ({ task, open, handleClose }) => {
     const handleSubmit = async event => {
         event.preventDefault()
         try {
-            await appService.editTask(taskData.Task_plan, taskData.Task_notes, task.Task_id)
+            const updatedTask = await appService.editTask(
+                taskData.Task_plan,
+                taskData.Task_notes,
+                task.Task_id,
+                task.Task_state,
+                task.Task_name
+            )
+            // If successful, update the task in the parent component
+            handleTaskUpdate(updatedTask.data)
         } catch (error) {
             console.error("Unexpected error in handleSubmit", error)
         }
-        handleClose
+        handleClose()
+    }
+    const handlePromote = async event => {
+        event.preventDefault()
+        try {
+            const updatedTask = await appService.promoteTask(
+                taskData.Task_plan,
+                taskData.Task_notes,
+                task.Task_id,
+                task.Task_state,
+                task.Task_name,
+                task.Task_app_Acronym
+            )
+            // If successful, update the task in the parent component
+            handleTaskUpdate(updatedTask.data)
+        } catch (error) {
+            console.error("Unexpected error in handleSubmit", error)
+        }
+        handleClose()
     }
 
     return (
@@ -95,7 +132,18 @@ const TaskModal = ({ task, open, handleClose }) => {
                             value={task.Task_notes}
                         />
                         <Box mt={2}>
-                            <TextField label="New Note" multiline rows={3} variant="outlined" fullWidth />
+                            <TextField
+                                label="New Note"
+                                multiline
+                                rows={3}
+                                variant="outlined"
+                                fullWidth
+                                name="Task_notes"
+                                value={taskData.Task_notes}
+                                placeholder="Input note"
+                                // This can be made editable based on requirements
+                                onChange={handleChange}
+                            />
                         </Box>
                     </Grid>
                     {/* right side */}
@@ -167,24 +215,26 @@ const TaskModal = ({ task, open, handleClose }) => {
                                 }}
                                 value={task.Task_owner}
                             />
-                            <FormControl fullWidth size="small" margin="dense">
-                                <InputLabel id="plan-select-label">Choose Plan</InputLabel>
-                                <Select
-                                    labelId="plan-select-label"
-                                    label="Plan"
-                                    name="Task_plan"
-                                    value={taskData.Task_plan}
-                                    // This can be made editable based on requirements
-                                    onChange={e => handleDropdownChange(e.target.name, e.target.value)}
-                                >
-                                    {planOptions.map(option => (
-                                        <MenuItem key={option} value={option}>
-                                            {option}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                            <TextField
+                            {planOptions && (
+                                <FormControl fullWidth size="small" margin="dense">
+                                    <InputLabel id="plan-select-label">Choose Plan</InputLabel>
+                                    <Select
+                                        labelId="plan-select-label"
+                                        label="Plan"
+                                        name="Task_plan"
+                                        value={taskData.Task_plan || ""}
+                                        // This can be made editable based on requirements
+                                        onChange={e => handleDropdownChange(e.target.name, e.target.value)}
+                                    >
+                                        {planOptions.map(option => (
+                                            <MenuItem key={option} value={option}>
+                                                {option}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            )}
+                            <TextField //do this last
                                 label="Plan Schedule"
                                 variant="outlined"
                                 fullWidth
@@ -203,12 +253,7 @@ const TaskModal = ({ task, open, handleClose }) => {
                 {/* <Button onClick={handleClose} color="primary">
                     Cancel
                 </Button> */}
-                <Button
-                    onClick={() => {
-                        /* TODO: handle promote and save */
-                    }}
-                    color="primary"
-                >
+                <Button onClick={handlePromote} color="primary">
                     Promote and Save
                 </Button>
                 <Button onClick={handleSubmit} color="primary">
