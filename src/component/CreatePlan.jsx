@@ -73,6 +73,8 @@ function CreatePlanForm({ currentApp }) {
                     Create
                 </Button>
             </TableCell>
+            <TableCell></TableCell>
+            <TableCell></TableCell>
         </TableRow>
     )
 }

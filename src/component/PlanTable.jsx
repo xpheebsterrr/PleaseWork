@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import { Table, TableBody, TableCell, TableHead, TableRow, Paper, Button, TextField } from "@mui/material"
 // import CreateplanForm from "./CreateplanForm.jsx"
 import appService from "../services/appService.jsx"
+import userServices from "../services/userServices.jsx"
 import { toast } from "react-toastify"
 import { useNavigate } from "react-router-dom"
 import CreatePlanForm from "./CreatePlan.jsx"
@@ -10,6 +11,22 @@ const PlanTable = ({ currentApp }) => {
     const navigate = useNavigate() //for protected routes later on
     const [plans, setPlans] = useState([]) //store all plans
     const [editingPlan, setEditingPlan] = useState(null) //to track editing plan (isEditingPlan)
+    const [isUserInPermittedGroup, setIsUserInPermittedGroup] = useState(false)
+
+    //Check if user is in permitted group
+    useEffect(() => {
+        const checkIfUserInGroup = async () => {
+            try {
+                const response = await userServices.checkGroup("Project Manager")
+                console.log("response.isUserInGroup", response.result)
+                setIsUserInPermittedGroup(response.result)
+            } catch (error) {
+                console.error("Error checking user group", error)
+            }
+        }
+        checkIfUserInGroup()
+    }, [editingPlan])
+
     //Change to fetch all plans
     //fetch all plans on table
     useEffect(() => {
@@ -72,24 +89,6 @@ const PlanTable = ({ currentApp }) => {
             })
         }
 
-        //to kick out of page if not project manager
-        // const enabledEditing = async prop => {
-        //     let verify
-        //     try {
-        //         verify = await planservices.checkGroup("admin")
-        //         console.log("verify plan", verify)
-        //     } catch (e) {
-        //         console.log("failed", e)
-        //         navigate("/dashboard")
-        //         return
-        //     }
-        //     if (verify.result === false) {
-        //         navigate("/dashboard")
-        //         return
-        //     }
-        //     setEditingPlan(prop)
-        // }
-
         return (
             <TableRow>
                 <TableCell>{newPlanData.Plan_MVP_name}</TableCell>
@@ -115,36 +114,40 @@ const PlanTable = ({ currentApp }) => {
                         newPlanData.Plan_endDate
                     )}{" "}
                 </TableCell>
-                <TableCell>
-                    {editMode ? (
-                        <>
-                            <Button onClick={saveChanges} variant="contained" color="primary">
-                                Save
-                            </Button>
+                {isUserInPermittedGroup && (
+                    <TableCell>
+                        {editMode ? (
+                            <>
+                                <Button onClick={saveChanges} variant="contained" color="primary">
+                                    Save
+                                </Button>
+                                <Button
+                                    onClick={() => {
+                                        setEditingPlan(null)
+                                    }}
+                                    variant="contained"
+                                    color="secondary"
+                                >
+                                    Cancel
+                                </Button>
+                            </>
+                        ) : (
                             <Button
-                                onClick={() => {
-                                    setEditingPlan(null)
+                                onClick={e => {
+                                    e.preventDefault()
+                                    // enabledEditing(newPlanData.Plan_MVP_name)
+                                    setEditingPlan(newPlanData.Plan_MVP_name)
                                 }}
                                 variant="contained"
-                                color="secondary"
+                                color="primary"
                             >
-                                Cancel
+                                Edit
                             </Button>
-                        </>
-                    ) : (
-                        <Button
-                            onClick={e => {
-                                e.preventDefault()
-                                // enabledEditing(newPlanData.Plan_MVP_name)
-                                setEditingPlan(newPlanData.Plan_MVP_name)
-                            }}
-                            variant="contained"
-                            color="primary"
-                        >
-                            Edit
-                        </Button>
-                    )}
-                </TableCell>
+                        )}
+                    </TableCell>
+                )}
+                <TableCell></TableCell>
+                <TableCell></TableCell>
             </TableRow>
         )
     }
@@ -170,7 +173,7 @@ const PlanTable = ({ currentApp }) => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    <CreatePlanForm currentApp={currentApp} />
+                    {isUserInPermittedGroup && <CreatePlanForm currentApp={currentApp} />}
                     {Array.isArray(plans) &&
                         plans.map(plan => <PlanRow key={`${plan.Plan_MVP_name}-${plan.Plan_app_Acronym}`} plan={plan} />)}
                 </TableBody>

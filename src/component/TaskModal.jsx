@@ -22,7 +22,6 @@ import appService from "../services/appService.jsx"
 import userServices from "../services/userServices.jsx"
 import { toast } from "react-toastify"
 
-
 const TaskModal = ({ task, open, handleClose, fetchTasks }) => {
     if (!task) return null
     const [taskData, setTaskData] = useState({ ...task, Task_notes: "" }) // Initialize taskData with task
@@ -192,20 +191,22 @@ const TaskModal = ({ task, open, handleClose, fetchTasks }) => {
                             }}
                             value={task.Task_notes}
                         />
-                        <Box mt={2}>
-                            <TextField
-                                label="New Note"
-                                multiline
-                                rows={3}
-                                variant="outlined"
-                                fullWidth
-                                name="Task_notes"
-                                value={taskData.Task_notes}
-                                placeholder="Input note"
-                                // This can be made editable based on requirements
-                                onChange={handleChange}
-                            />
-                        </Box>
+                        {task.Task_state !== "closed" && (
+                            <Box mt={2}>
+                                <TextField
+                                    label="New Note"
+                                    multiline
+                                    rows={3}
+                                    variant="outlined"
+                                    fullWidth
+                                    name="Task_notes"
+                                    value={taskData.Task_notes}
+                                    placeholder="Input note"
+                                    // This can be made editable based on requirements
+                                    onChange={handleChange}
+                                />
+                            </Box>
+                        )}
                     </Grid>
                     {/* right side */}
                     <Grid item xs={12} md={4}>
@@ -313,20 +314,31 @@ const TaskModal = ({ task, open, handleClose, fetchTasks }) => {
                     </Grid>
                 </Grid>
             </DialogContent>
-            <DialogActions>
-                {/* <Button onClick={handleClose} color="primary">
-                    Cancel
-                </Button> */}
-                <Button onClick={handleDemote} color="primary" disabled={!(task.Task_state === "done" && isUserInPermittedGroup)}>
-                    Demote and Save
-                </Button>
-                <Button onClick={handlePromote} color="primary" disabled={task.Task_state === "close" || !isUserInPermittedGroup}>
-                    Promote and Save
-                </Button>
-                <Button onClick={handleSubmit} color="primary">
-                    Save Changes
-                </Button>
-            </DialogActions>
+            {task.Task_state !== "closed" && (
+                <DialogActions>
+                    <Button
+                        onClick={handleDemote}
+                        color="primary"
+                        disabled={
+                            //dev stops task in doing OR PL rejects task in done
+                            !(task.Task_state === "doing" && isUserInPermittedGroup) &&
+                            !(task.Task_state === "done" && isUserInPermittedGroup)
+                        }
+                    >
+                        {task.Task_state === "doing" ? "Demote and Save" : "Reject and Save"}
+                    </Button>
+                    <Button
+                        onClick={handlePromote}
+                        color="primary"
+                        disabled={task.Task_state === "close" || !isUserInPermittedGroup}
+                    >
+                        Promote and Save
+                    </Button>
+                    <Button onClick={handleSubmit} color="primary">
+                        Save Changes
+                    </Button>
+                </DialogActions>
+            )}
         </Dialog>
     )
 }
