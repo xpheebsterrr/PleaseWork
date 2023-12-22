@@ -18,8 +18,8 @@ import userServices from "../services/userServices.jsx"
 import { toast } from "react-toastify"
 import appService from "../services/appService.jsx"
 
-const CreateApp = ({fetchApps}) => {
-    console.log('createapp', fetchApps)
+const CreateApp = ({ fetchApps }) => {
+    console.log("createapp", fetchApps)
     const [open, setOpen] = useState(false)
     const [appData, setAppData] = useState({
         App_Acronym: "",
@@ -108,7 +108,7 @@ const CreateApp = ({fetchApps}) => {
         } catch (error) {
             console.error("Unexpected error in handleSubmit", error)
         }
-        console.log('created app?')
+        console.log("created app?")
         setOpen(false)
         fetchApps()
     }
@@ -134,7 +134,7 @@ const CreateApp = ({fetchApps}) => {
                                 autoFocus
                                 margin="dense"
                                 name="App_Acronym"
-                                label="App_Acronym"
+                                label="App_Acronym*"
                                 type="text"
                                 fullWidth
                                 style={{ marginBottom: "16px" }}
@@ -144,7 +144,7 @@ const CreateApp = ({fetchApps}) => {
                             <TextField
                                 margin="dense"
                                 name="App_Rnumber"
-                                label="App_Rnumber"
+                                label="App_Rnumber*"
                                 type="number"
                                 fullWidth
                                 value={appData.App_Rnumber}

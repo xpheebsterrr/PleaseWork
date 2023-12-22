@@ -62,14 +62,15 @@ const createApp = async (
         if (message === "Error: User is not authorised.") {
             toast.error("Error: User is not authorised.")
         }
-        // Show error message
-        if (error.message === "Request failed with status code 500") {
-            toast.error("App exists")
-        }
+
         // Show a toast with the dynamic message
         else toast.success(`${message}`)
         return response.data
     } catch (error) {
+        // Show error message
+        if (error.response.data.errMessage === "Out of range value for column 'App_Rnumber' at row 1") {
+            toast.error("Invalid R number")
+        }
         console.error("Error creating App:", error)
         const errorMessage = error.response?.data?.message || "Failed to create App. Please try again."
         // Show an error toast with the dynamic error message

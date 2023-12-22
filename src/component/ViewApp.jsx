@@ -84,7 +84,7 @@ const ViewApp = ({ app }) => {
                                 <strong>App Acronym:</strong> {app.App_Acronym}
                             </StyledTypography>
                             <StyledTypography>
-                                <strong>App Acronym:</strong> {app.App_Rnumber}
+                                <strong>App_Rnumber:</strong> {app.App_Rnumber}
                             </StyledTypography>
                             <Box display="flex" gap={2} mt={2} mb={2}>
                                 <StyledDateDisplay>
@@ -94,9 +94,6 @@ const ViewApp = ({ app }) => {
                                     <strong>To: &nbsp;</strong> {app.App_endDate}
                                 </StyledDateDisplay>
                             </Box>
-                            <StyledTypography>
-                                <strong>App Acronym:</strong> {app.App_Acronym}
-                            </StyledTypography>
                             <TextField
                                 fullWidth
                                 margin="normal"
