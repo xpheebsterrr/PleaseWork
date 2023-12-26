@@ -162,6 +162,13 @@ const TaskModal = ({ task, open, handleClose, fetchTasks }) => {
         handleClose()
     }
 
+    // State to track if Task_plan has changed
+    const [isTaskPlanChanged, setIsTaskPlanChanged] = useState(false)
+    // useEffect to update isTaskPlanChanged based on taskData.Task_plan and task.Task_plan
+    useEffect(() => {
+        setIsTaskPlanChanged(taskData.Task_plan !== task.Task_plan)
+    }, [taskData.Task_plan, task.Task_plan])
+
     return (
         <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
             <DialogTitle>
@@ -330,7 +337,7 @@ const TaskModal = ({ task, open, handleClose, fetchTasks }) => {
                     <Button
                         onClick={handlePromote}
                         color="primary"
-                        disabled={task.Task_state === "close" || !isUserInPermittedGroup}
+                        disabled={task.Task_state === "close" || !isUserInPermittedGroup || isTaskPlanChanged}
                     >
                         Promote and Save
                     </Button>
