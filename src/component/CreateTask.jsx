@@ -5,7 +5,6 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, I
 
 import appService from "../services/appService.jsx"
 
-
 const CreateTask = ({ currentApp, fetchTasks }) => {
     console.log("currentApp", currentApp)
     const [modalOpen, setModalOpen] = useState(false)
@@ -24,15 +23,18 @@ const CreateTask = ({ currentApp, fetchTasks }) => {
         // Fetch the latest R number and update task ID before opening the modal
         try {
             const appData = await appService.getApp(currentApp)
-            let nextRNumber
-            // Check if the taskID has already been set, if so, increment it
-            if (taskID) {
-                const currentRNumber = parseInt(taskID.split("_")[1], 10) //the number converted to integer
-                nextRNumber = currentRNumber + 1
-            } else {
-                // If not, use the original App_Rnumber from the app data
-                nextRNumber = appData.data.App_Rnumber
-            }
+            // Display the next R number in the modal but don't set it as taskID yet
+            const nextRNumber = appData.data.App_Rnumber
+
+            // let nextRNumber
+            // // Check if the taskID has already been set, if so, increment it
+            // if (taskID) {
+            //     const currentRNumber = parseInt(taskID.split("_")[1], 10) //the number converted to integer
+            //     nextRNumber = currentRNumber + 1
+            // } else {
+            //     // If not, use the original App_Rnumber from the app data
+            //     nextRNumber = appData.data.App_Rnumber
+            // }
             const newTaskID = `${currentApp}_${nextRNumber}`
             // const newTaskID = currentApp + "_" + nextRNumber
             setTaskID(newTaskID)
@@ -44,13 +46,21 @@ const CreateTask = ({ currentApp, fetchTasks }) => {
 
     const handleSubmit = async event => {
         event.preventDefault()
+        // Generate taskID only when creating the task
+        let nextRNumber
+        const appData = await appService.getApp(currentApp)
+        if (appData.data.App_Rnumber) {
+            nextRNumber = appData.data.App_Rnumber
+        }
+        const newTaskID = `${currentApp}_${nextRNumber}`
+
         try {
-            await appService.createTask(taskData.Task_name, taskData.Task_description, taskID, currentApp)
+            await appService.createTask(taskData.Task_name, taskData.Task_description, newTaskID, currentApp)
         } catch (error) {
             console.error("error in handleSubmit", error)
         }
         setModalOpen(false) // Close the modal
-        fetchTasks();
+        fetchTasks()
     }
 
     return (
