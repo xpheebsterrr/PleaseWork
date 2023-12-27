@@ -53,7 +53,7 @@ const Dashboard = () => {
                         </Typography>
                         {isUserInPermittedGroup && <CreateApp fetchApps={fetchApps} />}
                     </Box>
-                    <AppTable apps={apps} isUserInPermittedGroup={isUserInPermittedGroup} />
+                    <AppTable apps={apps} isUserInPermittedGroup={isUserInPermittedGroup} fetchApps={fetchApps} />
                 </Box>
             </Box>
         </Container>

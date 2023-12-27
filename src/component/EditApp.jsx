@@ -18,7 +18,7 @@ import userServices from "../services/userServices.jsx"
 import { toast } from "react-toastify"
 import appService from "../services/appService.jsx"
 
-const EditApp = ({ app }) => {
+const EditApp = ({ app, fetchApps }) => {
     const [open, setOpen] = useState(false)
     const { ...appData } = app //app saved into appData
     const [newAppData, setNewAppData] = useState({ ...appData }) //initialise newAppData with currentAppData
@@ -97,6 +97,7 @@ const EditApp = ({ app }) => {
             ...app
         })
         setOpen(false)
+        fetchApps()
     }
     console.log("appData", appData)
     console.log("newAppData", newAppData)

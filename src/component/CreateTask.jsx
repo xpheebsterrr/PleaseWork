@@ -56,6 +56,12 @@ const CreateTask = ({ currentApp, fetchTasks }) => {
 
         try {
             await appService.createTask(taskData.Task_name, taskData.Task_description, newTaskID, currentApp)
+            // Reset the form fields to initial state after task creation
+            setTaskData({
+                Task_name: "",
+                Task_description: ""
+            })
+            setTaskID("") // Reset the taskID as well
         } catch (error) {
             console.error("error in handleSubmit", error)
         }
@@ -102,9 +108,10 @@ const CreateTask = ({ currentApp, fetchTasks }) => {
                         fullWidth
                         name="id"
                         value={taskID} // Use the taskID from the state
-                        InputProps={{
-                            readOnly: true // Make the ID field read-only if it shouldn't be edited
-                        }}
+                        // InputProps={{
+                        //     readOnly: true // Make the ID field read-only if it shouldn't be edited
+                        // }}
+                        disabled
                     />
                     <TextField
                         margin="dense"
@@ -113,9 +120,10 @@ const CreateTask = ({ currentApp, fetchTasks }) => {
                         fullWidth
                         name="appAcronym"
                         value={currentApp}
-                        InputProps={{
-                            readOnly: true // Make the ID field read-only if it shouldn't be edited
-                        }}
+                        // InputProps={{
+                        //     readOnly: true // Make the ID field read-only if it shouldn't be edited
+                        // }}
+                        disabled
                     />
                     <TextField
                         margin="dense"

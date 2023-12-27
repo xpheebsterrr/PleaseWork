@@ -105,6 +105,18 @@ const CreateApp = ({ fetchApps }) => {
                 appData.App_permit_Doing,
                 appData.App_permit_Done
             )
+            setAppData({
+                App_Acronym: "",
+                App_Rnumber: "",
+                App_startDate: "",
+                App_endDate: "",
+                App_Description: "",
+                App_permit_Create: "",
+                App_permit_Open: "",
+                App_permit_toDoList: "",
+                App_permit_Doing: "",
+                App_permit_Done: ""
+            })
         } catch (error) {
             console.error("Unexpected error in handleSubmit", error)
         }

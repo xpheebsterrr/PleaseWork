@@ -8,7 +8,7 @@ import userServices from "../services/userServices.jsx"
 import EditApp from "./EditApp.jsx"
 import ViewApp from "./ViewApp.jsx"
 
-const AppTable = ({ apps }) => {
+const AppTable = ({ apps, fetchApps }) => {
     const [isUserInPermittedGroup, setIsUserInPermittedGroup] = useState(false)
     //Check if user is in permitted group
     useEffect(() => {
@@ -52,7 +52,7 @@ const AppTable = ({ apps }) => {
                     {/* <Button variant="contained" color="primary" style={{ marginRight: "25px" }}>
                         Edit
                     </Button> */}
-                    {isUserInPermittedGroup && <EditApp app={app} />}
+                    {isUserInPermittedGroup && <EditApp app={app} fetchApps={fetchApps} />}
                 </TableCell>
             </TableRow>
         )
